@@ -8,7 +8,7 @@ import eu.trowl.rex.model.interfaces.REXPropertyExpressionChain;
 public class REXPropertyExpressionChainImpl implements
 		REXPropertyExpressionChain {
 
-	List<REXObjectPropertyExpressionImpl> properties;
+	protected List<REXObjectPropertyExpressionImpl> properties;
 	
 	@Override
 	public List<? extends REXObjectPropertyExpression> getProperties() {

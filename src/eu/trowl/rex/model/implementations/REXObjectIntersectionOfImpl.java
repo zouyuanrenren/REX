@@ -8,7 +8,7 @@ import eu.trowl.rex.model.interfaces.REXObjectIntersectionOf;
 public class REXObjectIntersectionOfImpl extends REXClassExpressionImpl
 		implements REXObjectIntersectionOf {
 
-	List<REXClassExpressionImpl> intersects;
+	protected List<REXClassExpressionImpl> intersects;
 
 	public REXObjectIntersectionOfImpl(List<REXClassExpressionImpl> conjuncts) {
 		// TODO Auto-generated constructor stub

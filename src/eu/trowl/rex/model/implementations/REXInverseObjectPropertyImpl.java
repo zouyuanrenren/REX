@@ -5,7 +5,7 @@ import eu.trowl.rex.model.interfaces.REXInverseObjectProperty;
 public class REXInverseObjectPropertyImpl extends REXObjectPropertyExpressionImpl
 		implements REXInverseObjectProperty {
 
-	REXObjectPropertyImpl inverse = null;
+	protected REXObjectPropertyImpl inverse = null;
 
 	public REXInverseObjectPropertyImpl(REXObjectPropertyImpl prop) {
 		// TODO Auto-generated constructor stub

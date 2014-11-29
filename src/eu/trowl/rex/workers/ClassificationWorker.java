@@ -61,7 +61,7 @@ public class ClassificationWorker implements Runnable{
 		}
 		if(!sub.superClasses.contains(sup))
 		{
-			REXSubClassOfImpl newAxiom = factory.getREL2SubClassOf(sub, sup);
+			REXSubClassOfImpl newAxiom = factory.getREXSubClassOf(sub, sup);
 			if(newAxiom.tested)
 				return;
 			newAxiom.tested = true;
@@ -99,7 +99,7 @@ public class ClassificationWorker implements Runnable{
 	{
 		if(!D.predecessors.containsKey(role) || !D.predecessors.get(role).contains(C))
 		{
-			REXSubClassOfImpl newAxiom = factory.getREL2SubClassOfSomeValuesFrom(C, role, D);
+			REXSubClassOfImpl newAxiom = factory.getREXSubClassOfSomeValuesFrom(C, role, D);
 			if(newAxiom.tested)
 				return;
 			newAxiom.subsumption = subsumption;
@@ -150,7 +150,7 @@ public class ClassificationWorker implements Runnable{
 		}
 		if(!sub.superClasses.contains(sup))
 		{
-			REXSubClassOfImpl newAxiom = factory.getstrictREL2SubClassOf(sub, sup);
+			REXSubClassOfImpl newAxiom = factory.getstrictREXSubClassOf(sub, sup);
 			if(newAxiom.tested)
 				return;
 			newAxiom.tested = true;
@@ -463,7 +463,7 @@ public class ClassificationWorker implements Runnable{
 			for(REXObjectPropertyExpressionImpl s:role.getInversePropertyExpression().getSuperRoles())
 				if(s.onLHS)
 				{
-					REXClassExpressionImpl newSome = factory.testREL2ObjectSomeValuesFrom(s, RHS);
+					REXClassExpressionImpl newSome = factory.testREXObjectSomeValuesFrom(s, RHS);
 					if(newSome != null && newSome.originalLHS)
 						for(REXClassExpressionImpl newContext:context.implications.get(role))
 							if(newContext instanceof REXIndividualImpl)
@@ -488,7 +488,7 @@ public class ClassificationWorker implements Runnable{
 						for(REXClassExpressionImpl sup:LHS.superClasses)
 						{
 							// now we test the existence of \forall S.sup
-							REXClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(s, sup);
+							REXClassExpressionImpl all = factory.testREXObjectAllValuesFrom(s, sup);
 							if(all != null)
 								supalls.add(all);
 						}
@@ -501,7 +501,7 @@ public class ClassificationWorker implements Runnable{
 									inferstrictC_sub_D(newcontext,supall);
 					}
 					// the <=1 rule again
-					REXClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(s, RHS);
+					REXClassExpressionImpl all = factory.testREXObjectAllValuesFrom(s, RHS);
 					if(all != null && context.predecessors.get(role) != null)
 					{
 						for(REXClassExpressionImpl newcontext:context.predecessors.get(role))
@@ -530,7 +530,7 @@ public class ClassificationWorker implements Runnable{
 					boolean leq = true;
 					for(REXClassExpressionImpl sup:context.superClasses)
 					{
-						REXClassExpressionImpl newSome = factory.testREL2ObjectSomeValuesFrom(s, sup);
+						REXClassExpressionImpl newSome = factory.testREXObjectSomeValuesFrom(s, sup);
 						if(newSome != null && newSome.originalLHS)
 							inferstrictC_sub_D(RHSFiller,newSome);
 //						if(leq && sup.maxs.containsKey(1) && sup.maxs.get(1).containsKey(s))
@@ -542,7 +542,7 @@ public class ClassificationWorker implements Runnable{
 							{
 								for(REXClassExpressionImpl sup2:context.superClasses)
 								{
-									REXClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(s, sup2);
+									REXClassExpressionImpl all = factory.testREXObjectAllValuesFrom(s, sup2);
 									if(all != null)
 										inferstrictC_sub_D(RHSFiller,all);
 								}
@@ -586,7 +586,7 @@ public class ClassificationWorker implements Runnable{
 		RHSrole = axiom.rhsRole;
 		RHSFiller = axiom.rhsFiller;
 		if(RHSrole != null)
-			RHS = factory.testREL2ObjectSomeValuesFrom(RHSrole, RHSFiller);
+			RHS = factory.testREXObjectSomeValuesFrom(RHSrole, RHSFiller);
 		else
 			RHS = RHSFiller;
 
@@ -669,7 +669,7 @@ public class ClassificationWorker implements Runnable{
 			for(REXObjectPropertyExpressionImpl r:LHS.mins.get(i).keySet())
 				for(REXObjectPropertyExpressionImpl s:r.getSuperRoles())
 				{
-					REXClassExpressionImpl newSome = factory.testREL2ObjectSomeValuesFrom(s, RHS);
+					REXClassExpressionImpl newSome = factory.testREXObjectSomeValuesFrom(s, RHS);
 					if(newSome != null && newSome.originalLHS)
 					{
 						REXObjectMinCardinalityImpl X = LHS.mins.get(i).get(r);
@@ -704,7 +704,7 @@ public class ClassificationWorker implements Runnable{
 								{
 //									REL2ClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(s, sup2);
 //									if(all != null)
-										inferstrictC_sub_D(LHS,factory.testREL2ObjectAllValuesFrom(s, sup2));
+										inferstrictC_sub_D(LHS,factory.testREXObjectAllValuesFrom(s, sup2));
 								}
 					}
 					// alternative
@@ -717,7 +717,7 @@ public class ClassificationWorker implements Runnable{
 								{
 //									REL2ClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(s, sup2);
 //									if(all != null)
-										inferstrictC_sub_D(LHS,factory.testREL2ObjectAllValuesFrom(s, sup2));
+										inferstrictC_sub_D(LHS,factory.testREXObjectAllValuesFrom(s, sup2));
 								}
 					}
 				}
@@ -741,11 +741,11 @@ public class ClassificationWorker implements Runnable{
 								{
 //									REL2ClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(max.getProperty(), sup2);
 //									if(all != null)
-										inferstrictC_sub_D(LHS,factory.testREL2ObjectAllValuesFrom(max.getProperty(), sup2));
+										inferstrictC_sub_D(LHS,factory.testREXObjectAllValuesFrom(max.getProperty(), sup2));
 								}
 							for(REXClassExpressionImpl supC2:max.getProperty().somes.keySet())
 								if(supC2.complement != null && filler.superClasses.contains(supC2.complement) && supC2.complement.hasMax(1, max.getProperty()))
-									inferstrictC_sub_D(LHS,factory.testREL2ObjectAllValuesFrom(max.getProperty(), supC2.complement));
+									inferstrictC_sub_D(LHS,factory.testREXObjectAllValuesFrom(max.getProperty(), supC2.complement));
 						}
 		}
 		// alternative
@@ -763,11 +763,11 @@ public class ClassificationWorker implements Runnable{
 									{
 //										REL2ClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(max.getProperty(), sup2);
 //										if(all != null)
-											inferstrictC_sub_D(LHS,factory.testREL2ObjectAllValuesFrom(min.getProperty(), sup2));
+											inferstrictC_sub_D(LHS,factory.testREXObjectAllValuesFrom(min.getProperty(), sup2));
 									}
 								for(REXClassExpressionImpl supC2:min.getProperty().somes.keySet())
 									if(supC2.complement != null && filler.superClasses.contains(supC2.complement) && supC2.complement.hasMax(1, min.getProperty()))
-										inferstrictC_sub_D(LHS,factory.testREL2ObjectAllValuesFrom(min.getProperty(), supC2.complement));
+										inferstrictC_sub_D(LHS,factory.testREXObjectAllValuesFrom(min.getProperty(), supC2.complement));
 							}
 				
 		}
@@ -845,7 +845,7 @@ public class ClassificationWorker implements Runnable{
 				boolean leq = true;
 				for(REXClassExpressionImpl sup:context.superClasses)
 				{
-					REXClassExpressionImpl newSome = factory.testREL2ObjectSomeValuesFrom(s, sup);
+					REXClassExpressionImpl newSome = factory.testREXObjectSomeValuesFrom(s, sup);
 					if(newSome != null && newSome.originalLHS)
 						inferstrictC_sub_D(LHS,newSome);
 //					if(leq && sup.maxs.containsKey(1) && sup.maxs.get(1).containsKey(s))
@@ -857,7 +857,7 @@ public class ClassificationWorker implements Runnable{
 						{
 							for(REXClassExpressionImpl sup2:context.superClasses)
 							{
-								REXClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(s, sup2);
+								REXClassExpressionImpl all = factory.testREXObjectAllValuesFrom(s, sup2);
 								if(all != null)
 									inferstrictC_sub_D(LHS,all);
 							}
@@ -875,7 +875,7 @@ public class ClassificationWorker implements Runnable{
 			for(REXObjectPropertyExpressionImpl s:role.getSuperRoles())
 				if(s.onLHS)
 				{
-					REXClassExpressionImpl newSome = factory.testREL2ObjectSomeValuesFrom(s, RHS);
+					REXClassExpressionImpl newSome = factory.testREXObjectSomeValuesFrom(s, RHS);
 					if(newSome != null && newSome.originalLHS)
 						for(REXClassExpressionImpl newContext:context.predecessors.get(role))
 						{
@@ -899,7 +899,7 @@ public class ClassificationWorker implements Runnable{
 						for(REXClassExpressionImpl sup:LHS.superClasses)
 						{
 							// now we test the existence of \forall S.sup
-							REXClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(s, sup);
+							REXClassExpressionImpl all = factory.testREXObjectAllValuesFrom(s, sup);
 							if(all != null)
 								supalls.add(all);
 						}
@@ -912,7 +912,7 @@ public class ClassificationWorker implements Runnable{
 									inferstrictC_sub_D(newcontext,supall);
 					}
 					// the <=1 rule again
-					REXClassExpressionImpl all = factory.testREL2ObjectAllValuesFrom(s, RHS);
+					REXClassExpressionImpl all = factory.testREXObjectAllValuesFrom(s, RHS);
 					if(all != null && context.predecessors.get(role) != null)
 					{
 						for(REXClassExpressionImpl newcontext:context.predecessors.get(role))
@@ -941,7 +941,7 @@ public class ClassificationWorker implements Runnable{
 					for(REXObjectPropertyExpressionImpl s:RHSrole.getInversePropertyExpression().getSuperRoles())
 						for(REXClassExpressionImpl C:LHS.superClasses)
 						{
-							REXObjectSomeValuesFromImpl somesC = factory.testREL2ObjectSomeValuesFrom(s, C);
+							REXObjectSomeValuesFromImpl somesC = factory.testREXObjectSomeValuesFrom(s, C);
 							if(somesC != null)
 							{
 								for(REXClassExpressionImpl D:somesC.getOriginalSuperClasses())
@@ -967,7 +967,7 @@ public class ClassificationWorker implements Runnable{
 					{
 						if(is.getInversePropertyExpression() != null)
 						{
-							REXObjectSomeValuesFromImpl somesC = factory.testREL2ObjectSomeValuesFrom(is.getInversePropertyExpression(), RHS);
+							REXObjectSomeValuesFromImpl somesC = factory.testREXObjectSomeValuesFrom(is.getInversePropertyExpression(), RHS);
 							if(somesC != null)
 							{
 								for(REXClassExpressionImpl D:somesC.getOriginalSuperClasses())

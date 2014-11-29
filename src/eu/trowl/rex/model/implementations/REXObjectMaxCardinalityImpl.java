@@ -5,8 +5,8 @@ import eu.trowl.rex.model.interfaces.REXObjectMaxCardinality;
 public class REXObjectMaxCardinalityImpl extends REXClassExpressionImpl
 		implements REXObjectMaxCardinality {
 
-	REXClassExpressionImpl filler;
-	REXObjectPropertyExpressionImpl prop;
+	protected REXClassExpressionImpl filler;
+	protected REXObjectPropertyExpressionImpl prop;
 	int cardinalityValue;
 
 	public REXObjectMaxCardinalityImpl(int cardinality,

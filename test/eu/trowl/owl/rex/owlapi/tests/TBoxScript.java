@@ -26,7 +26,7 @@ public class TBoxScript {
             System.out.print(i+" "+file.getName()+" ");
 //			if(i>14 && file.getName().toLowerCase().endsWith("owl"))
 //			if(file.length() > 100000000 && file.length() <200000000)
-            if(i>2)
+            if(i>0)
 			{
 		        Future<String> future = executor.submit(new TBoxClassification(file));
 

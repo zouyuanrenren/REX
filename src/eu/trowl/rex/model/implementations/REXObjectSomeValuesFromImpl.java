@@ -5,8 +5,8 @@ import eu.trowl.rex.model.interfaces.REXObjectSomeValuesFrom;
 public class REXObjectSomeValuesFromImpl extends REXClassExpressionImpl
 		implements REXObjectSomeValuesFrom {
 
-	REXClassExpressionImpl filler;
-	REXObjectPropertyExpressionImpl prop;
+	protected REXClassExpressionImpl filler;
+	protected REXObjectPropertyExpressionImpl prop;
 	
 	public REXObjectSomeValuesFromImpl(REXObjectPropertyExpressionImpl role,
 			REXClassExpressionImpl filler2) {

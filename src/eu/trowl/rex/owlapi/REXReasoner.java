@@ -191,7 +191,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 				{
 				if(sub instanceof REXClassImpl && !atom.equivalence.contains(sub) && leaf.contains(sub))
 				{
-					leaf.removeAll(sub.asREL2ClassImpl().equivalence);
+					leaf.removeAll(sub.asREXClassImpl().equivalence);
 				}
 				}
 			}
@@ -715,7 +715,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		if(!rel2Factory.TBox_Classified)
 			precomputeInferences(InferenceType.CLASS_HIERARCHY);
 		OWLClassNode equivalence = new OWLClassNode();
-		REXClassExpressionImpl desc = rel2Factory.getREL2ClassExpression(concept);
+		REXClassExpressionImpl desc = rel2Factory.getREXClassExpression(concept);
 		REXClassImpl bot = rel2Factory.bottom;
 //		boolean duo = false;
 		if(desc == null || !(desc instanceof REXClassImpl))
@@ -748,8 +748,8 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		if(REL2ClassImpl == bot)
 			return unsats;
 		for(REXClassExpressionImpl eq:REL2ClassImpl.superClasses)
-			if(eq instanceof REXClassImpl && eq.superClasses.contains(REL2ClassImpl) && eq.asREL2ClassImpl().original)
-				equivalence.add(factory.getOWLClass(eq.asREL2ClassImpl().getIRI()));
+			if(eq instanceof REXClassImpl && eq.superClasses.contains(REL2ClassImpl) && eq.asREXClassImpl().original)
+				equivalence.add(factory.getOWLClass(eq.asREXClassImpl().getIRI()));
 
 //		 clean the classifier, factory, ontology, etc for duo-classification.
 //		if(duo)
@@ -1165,7 +1165,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		if(!rel2Factory.TBox_Classified)
 			precomputeInferences(InferenceType.CLASS_HIERARCHY);
 		OWLClassNodeSet	descendants = new OWLClassNodeSet();
-		REXClassExpressionImpl desc = rel2Factory.getREL2ClassExpression(concept);
+		REXClassExpressionImpl desc = rel2Factory.getREXClassExpression(concept);
 		REXClassImpl bot = rel2Factory.bottom;
 //		boolean duo = false;
 //		if(desc == null || !(desc instanceof REL2ClassImpl))
@@ -1198,7 +1198,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 				{
 					boolean toadd = true;
 					for(REXClassExpressionImpl subsub:sub.superClasses)
-						if(subsub instanceof REXClassImpl && subsub.asREL2ClassImpl().original && !sub.equivalence.contains(subsub) && !atom.equivalence.contains(subsub) && subsub.superClasses.contains(atom) )
+						if(subsub instanceof REXClassImpl && subsub.asREXClassImpl().original && !sub.equivalence.contains(subsub) && !atom.equivalence.contains(subsub) && subsub.superClasses.contains(atom) )
 						{
 							toadd = false;
 							break;
@@ -1441,7 +1441,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		if(!rel2Factory.TBox_Classified)
 			precomputeInferences(InferenceType.CLASS_HIERARCHY);
 		OWLClassNodeSet	ancestors = new OWLClassNodeSet();
-		REXClassExpressionImpl desc = rel2Factory.getREL2ClassExpression(concept);
+		REXClassExpressionImpl desc = rel2Factory.getREXClassExpression(concept);
 //		REL2ClassImpl bot = rel2Factory.bottom;
 //		boolean duo = false;
 //		if(desc == null || !(desc instanceof REL2ClassImpl))
@@ -1470,11 +1470,11 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 						return leaves;
 					for(REXClassExpressionImpl sub:atom.superClasses)
 					{
-						if(sub instanceof REXClassImpl && sub.asREL2ClassImpl().original && !atom.equivalence.contains(sub) && !superClasses.contains(sub))
+						if(sub instanceof REXClassImpl && sub.asREXClassImpl().original && !atom.equivalence.contains(sub) && !superClasses.contains(sub))
 						{
 							boolean toadd = true;
 							for(REXClassExpressionImpl sub2:atom.superClasses)
-								if(sub2 instanceof REXClassImpl && sub2.asREL2ClassImpl().original && !atom.equivalence.contains(sub2) && !sub.asREL2ClassImpl().equivalence.contains(sub2) && sub2.superClasses.contains(sub))
+								if(sub2 instanceof REXClassImpl && sub2.asREXClassImpl().original && !atom.equivalence.contains(sub2) && !sub.asREXClassImpl().equivalence.contains(sub2) && sub2.superClasses.contains(sub))
 								{
 									toadd =false;
 									break;
@@ -1486,7 +1486,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 //									break;
 //								}
 							if(toadd)
-								superClasses.addAll(sub.asREL2ClassImpl().equivalence);
+								superClasses.addAll(sub.asREXClassImpl().equivalence);
 						}
 					}
 //					for(REL2ClassImpl sub:atom.tempSubsumers)
@@ -1516,8 +1516,8 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 					if(!atom.satisfiable)
 						return satisfiable;
 					for(REXClassExpressionImpl sub:atom.superClasses)
-						if(sub instanceof REXClassImpl && sub.asREL2ClassImpl().original && !atom.equivalence.contains(sub))
-							superClasses.add(sub.asREL2ClassImpl());
+						if(sub instanceof REXClassImpl && sub.asREXClassImpl().original && !atom.equivalence.contains(sub))
+							superClasses.add(sub.asREXClassImpl());
 //					for(REL2ClassImpl sub:atom.tempSubsumers)
 //						if(sub instanceof REL2ClassImpl && !atom.equivalence.contains(sub) && sub.original)
 //							superClasses.add(sub);
@@ -1700,7 +1700,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		if(!rel2Factory.ABox_Classified)
 			precomputeInferences(InferenceType.CLASS_ASSERTIONS);
 		OWLClassNodeSet types = new OWLClassNodeSet();
-		REXIndividualImpl indi = rel2Factory.getREL2Individual(arg0);
+		REXIndividualImpl indi = rel2Factory.getREXIndividual(arg0);
 		if(indi == null)
 			return types;
 //		REL2ClassImpl bot = rel2Factory.bottom;
@@ -1711,7 +1711,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		}
 		else
 			for(REXClassExpressionImpl cls:indi.superClasses)
-				if(cls instanceof REXClassImpl && ! (cls instanceof REXIndividualImpl) && cls.asREL2ClassImpl().original)
+				if(cls instanceof REXClassImpl && ! (cls instanceof REXIndividualImpl) && cls.asREXClassImpl().original)
 					classes.add((REXClassImpl) cls);
 		if(arg1 == true)
 		{
@@ -1871,7 +1871,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 
 //		OWLSubClassOfAxiom axiom1 = factory.getOWLSubClassOfAxiom(arg0, factory.getOWLNothing());
 //		return !entail(axiom1);
-		REXClassExpressionImpl cls = rel2Factory.getREL2ClassExpression(arg0);
+		REXClassExpressionImpl cls = rel2Factory.getREXClassExpression(arg0);
 		if(cls.isContext.get())
 			return cls.satisfiable;
 		else

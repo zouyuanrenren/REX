@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import eu.trowl.rex.factory.REXDataFactory;
+import eu.trowl.rex.factory.REXOntologyBuilder;
 import eu.trowl.rex.model.implementations.REXClassExpressionImpl;
 import eu.trowl.rex.model.implementations.REXClassImpl;
 import eu.trowl.rex.model.implementations.REXIndividualImpl;
@@ -28,11 +29,13 @@ public class Reasoner {
 
 	Timer timer = new Timer("REL");
 
-	public REXDataFactory factory = new REXDataFactory();
+	public REXDataFactory factory;
 
-	int AxiomNum = 0;
+//	int AxiomNum = 0;
 	
 	int cNum = 0;
+	
+	public REXOntologyBuilder builder = new REXOntologyBuilder();
 
 	HashSet<ClassificationWorker> workers = new HashSet<ClassificationWorker>(6);
 
@@ -57,22 +60,27 @@ public class Reasoner {
 
 	public void load(OWLOntology onto){
 //		timer.start();
-		cNum = onto.getClassesInSignature().size();
-		if(!onto.getClassesInSignature().contains(onto.getOWLOntologyManager().getOWLDataFactory().getOWLThing()))
-			cNum++;
-		if(!onto.getClassesInSignature().contains(onto.getOWLOntologyManager().getOWLDataFactory().getOWLNothing()))
-			cNum++;
-		factory.initialise(onto.getOWLOntologyManager().getOWLDataFactory());
-		if(onto.getClassesInSignature().size() > REXReasonerConfiguration.largeTThreshold)
-			factory.smallT = false;
-		if(onto.getIndividualsInSignature().size() > REXReasonerConfiguration.largeAThreshold)
-			factory.smallA = false;
-		for(OWLLogicalAxiom axiom:onto.getLogicalAxioms())
-		{
-			factory.initialiseAxiom(axiom);
-		}
-		roles = new ArrayList<REXObjectPropertyExpressionImpl>(factory.roles.values());
-		roles.addAll(factory.rolechainNames.values());
+		
+//		cNum = onto.getClassesInSignature().size();
+//		if(!onto.getClassesInSignature().contains(onto.getOWLOntologyManager().getOWLDataFactory().getOWLThing()))
+//			cNum++;
+//		if(!onto.getClassesInSignature().contains(onto.getOWLOntologyManager().getOWLDataFactory().getOWLNothing()))
+//			cNum++;
+//		factory.initialise(onto.getOWLOntologyManager().getOWLDataFactory());
+//		if(onto.getClassesInSignature().size() > REXReasonerConfiguration.largeTThreshold)
+//			factory.smallT = false;
+//		if(onto.getIndividualsInSignature().size() > REXReasonerConfiguration.largeAThreshold)
+//			factory.smallA = false;
+//		for(OWLLogicalAxiom axiom:onto.getLogicalAxioms())
+//		{
+//			factory.initialiseAxiom(axiom);
+//		}
+//		roles = new ArrayList<REXObjectPropertyExpressionImpl>(factory.roles.values());
+//		roles.addAll(factory.rolechainNames.values());
+		builder.buildOntology(onto);
+		factory = builder.getFactory();
+		cNum = builder.cNum;
+		roles = builder.roles;
 		completeRoles();
 
 		this.onto = onto;
@@ -84,11 +92,11 @@ public class Reasoner {
 //		timer.start();
 		if(TBox)
 		for(OWLClass clazz:onto.getClassesInSignature())
-			addActiveContext(factory.getREL2ClassExpression(clazz));
+			addActiveContext(factory.getREXClassExpression(clazz));
 		
 		if(ABox)
 			for(OWLNamedIndividual indi:onto.getIndividualsInSignature())
-				addActiveContext(factory.getREL2Individual(indi));
+				addActiveContext(factory.getREXIndividual(indi));
 		
 //		if(false)
 //		if(TBox || ABox)
@@ -115,7 +123,7 @@ public class Reasoner {
 
 	public void finishTBox() throws InterruptedException{
 
-		output();
+//		output();
 	}
 
 
@@ -131,7 +139,7 @@ public class Reasoner {
 			if(!cls.equals(onto.getOWLOntologyManager().getOWLDataFactory().getOWLThing())&&!cls.equals(onto.getOWLOntologyManager().getOWLDataFactory().getOWLNothing()))
 			{
 				int x = 0;
-				REXClassImpl concept = (REXClassImpl) factory.getREL2ClassExpression(cls);
+				REXClassImpl concept = (REXClassImpl) factory.getREXClassExpression(cls);
 				if(!concept.satisfiable)
 					x = cNum;
 				else
@@ -155,7 +163,7 @@ public class Reasoner {
 		for(OWLNamedIndividual indi:onto.getIndividualsInSignature())
 		{
 			int x = 0;
-			REXIndividualImpl individual = factory.getREL2Individual(indi);
+			REXIndividualImpl individual = factory.getREXIndividual(indi);
 			individual.superClasses.add(factory.top);
 			for(REXClassExpressionImpl sup:individual.superClasses)
 				if(sup instanceof REXClassImpl && ((REXClassImpl)sup).original && ((REXClassImpl) sup).getIRI() != null)
@@ -252,13 +260,13 @@ public class Reasoner {
 			if(context.isContext.compareAndSet(false, true))
 			{
 				factory.contexts.add(context);
-				REXSubClassOfImpl	axiom = factory.getREL2SubClassOf(context, context);
+				REXSubClassOfImpl	axiom = factory.getREXSubClassOf(context, context);
 //				if(axiom.LHSQueue.compareAndSet(false, true))
 				{
 				addToActiveContext(axiom);
 				if(factory.top.originalLHS)
 				{
-					axiom = factory.getREL2SubClassOf(context, factory.top);
+					axiom = factory.getREXSubClassOf(context, factory.top);
 					addToActiveContext(axiom);
 				}
 				}
@@ -323,9 +331,9 @@ public class Reasoner {
 				{
 					cls.superClasses.add(factory.top);
 				for(REXClassExpressionImpl sup:cls.superClasses)
-					if(sup instanceof REXClassImpl && sup.asREL2ClassImpl().original && sup.superClasses.contains(cls))
+					if(sup instanceof REXClassImpl && sup.asREXClassImpl().original && sup.superClasses.contains(cls))
 					{
-						cls.equivalence.add(sup.asREL2ClassImpl());
+						cls.equivalence.add(sup.asREXClassImpl());
 //						sup.asREL2ClassImpl().equivalence.add(cls);
 					}
 				}

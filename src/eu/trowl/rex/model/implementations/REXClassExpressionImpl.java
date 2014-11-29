@@ -91,7 +91,7 @@ abstract public class REXClassExpressionImpl implements REXClassExpression {
 		return null;
 	}
 
-	public REXClassImpl asREL2ClassImpl() {
+	public REXClassImpl asREXClassImpl() {
 		// TODO Auto-generated method stub
 		return (REXClassImpl) this;
 	}

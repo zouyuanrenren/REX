@@ -10,7 +10,7 @@ public class REXObjectUnionOfImpl extends REXClassExpressionImpl
 
 //	Set<REL2ClassExpressionImpl> operands;
 
-	List<REXClassExpressionImpl> operands;
+	protected List<REXClassExpressionImpl> operands;
 
 	public REXObjectUnionOfImpl(List<REXClassExpressionImpl> operands2) {
 		// TODO Auto-generated constructor stub

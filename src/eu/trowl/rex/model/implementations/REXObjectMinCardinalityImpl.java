@@ -5,8 +5,8 @@ import eu.trowl.rex.model.interfaces.REXObjectMinCardinality;
 public class REXObjectMinCardinalityImpl extends REXObjectSomeValuesFromImpl
 		implements REXObjectMinCardinality {
 
-	REXClassExpressionImpl filler;
-	REXObjectPropertyExpressionImpl prop;
+//	REXClassExpressionImpl filler;
+//	REXObjectPropertyExpressionImpl prop;
 	int cardinalityValue;
 
 	public REXObjectMinCardinalityImpl(int cardinality,
@@ -15,8 +15,8 @@ public class REXObjectMinCardinalityImpl extends REXObjectSomeValuesFromImpl
 		// TODO Auto-generated constructor stub
 		super(role, new REXCardinalityAtomic(filler, cardinality));
 		this.cardinalityValue = cardinality;
-		this.prop = role;
-		this.filler = filler;
+//		this.prop = role;
+//		this.filler = filler;
 	}
 
 	@Override

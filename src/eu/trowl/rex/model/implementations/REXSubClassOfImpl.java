@@ -73,6 +73,21 @@ public class REXSubClassOfImpl implements REXSubClassOf {
 		return str;
 	}
 
+	@Override
+	public void initialise() {
+		// TODO Auto-generated method stub
+		addToContext();
+		lhs.LHS();
+		if(rhsRole == null)
+			lhs.addOriginalSuperClasses(rhsFiller);
+		else
+			if(rhsRole.somes.containsKey(rhsFiller))
+				lhs.addOriginalSuperClasses(rhsRole.somes.get(rhsFiller));
+			else
+				System.out.println();
+		
+	}
+
 
 	
 	

@@ -6,8 +6,8 @@ import eu.trowl.rex.model.interfaces.REXSubObjectPropertyOf;
 
 public class REXSubPropertyChainOfImpl implements REXSubObjectPropertyOf {
 
-	REXPropertyExpressionChainImpl chain;
-	REXObjectPropertyExpressionImpl superRole;
+	protected REXPropertyExpressionChainImpl chain;
+	protected REXObjectPropertyExpressionImpl superRole;
 	
 	@Override
 	public REXSubObjectPropertyExpression getSubProperty() {
@@ -19,6 +19,12 @@ public class REXSubPropertyChainOfImpl implements REXSubObjectPropertyOf {
 	public REXObjectPropertyExpression getSuperProperty() {
 		// TODO Auto-generated method stub
 		return superRole;
+	}
+
+	@Override
+	public void initialise() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
