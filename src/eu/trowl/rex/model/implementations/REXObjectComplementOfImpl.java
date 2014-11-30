@@ -34,4 +34,10 @@ public class REXObjectComplementOfImpl extends REXClassExpressionImpl
 		// TODO Auto-generated method stub
 		complement.LHS();
 	}
+
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		return getClassExpression();
+	}
 }

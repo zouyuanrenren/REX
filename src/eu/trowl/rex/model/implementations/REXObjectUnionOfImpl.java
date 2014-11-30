@@ -55,4 +55,17 @@ public class REXObjectUnionOfImpl extends REXClassExpressionImpl
 		for(REXClassExpressionImpl operand:operands)
 			operand.RHS();
 	}
+	
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		if(complement != null)
+			return complement;
+		REXClassExpressionImpl firstComp = operands.get(0).testComplement();
+		REXClassExpressionImpl secondComp = operands.get(1).testComplement();
+		if(firstComp != null && secondComp != null)
+			complement = firstComp.Ands.get(secondComp);
+		return complement;
+	}
+
 }

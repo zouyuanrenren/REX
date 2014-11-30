@@ -56,5 +56,17 @@ public class REXObjectMinCardinalityImpl extends REXObjectSomeValuesFromImpl
 		// TODO Auto-generated method stub
 		filler.RHS();
 	}
+	
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		if(complement != null)
+			return complement;
+		REXClassExpressionImpl fillerFiller = ((REXCardinalityAtomic)filler).filler;
+		if(fillerFiller.maxs.containsKey(cardinalityValue-1))
+			complement = fillerFiller.maxs.get(cardinalityValue-1).get(prop);
+		return complement;
+	}
+
 
 }

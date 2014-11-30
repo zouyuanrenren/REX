@@ -65,6 +65,8 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
  */
 	
 	protected static REXDataFactory rel2Factory = null;
+	boolean TBox_Classified = false;
+	boolean ABox_Classified = false;
 
 	// whether a buffered reasoner
 	public boolean bufferred = true;
@@ -149,8 +151,8 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 			if(!rel2Factory.consistency)
 			{
 //				System.out.println("Ontology is be inconsistent!");
-				rel2Factory.TBox_Classified = true;
-				rel2Factory.ABox_Classified = true;
+				TBox_Classified = true;
+				ABox_Classified = true;
 
 //				return;
 				throw new InconsistentOntologyException();
@@ -167,7 +169,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 	//		System.out.println("Materialised.");
 			
 			// only perform the below if classified TBox the first time
-			if(TBox && !rel2Factory.TBox_Classified)
+			if(TBox && !TBox_Classified)
 			{
 				for(REXClassImpl cls:rel2Factory.concepts.values())
 					if(cls.original && cls.satisfiable && !satis.contains(cls))
@@ -231,10 +233,10 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 					leaves.addNode(ancestor);
 			}
 	
-			rel2Factory.TBox_Classified = true;
+			TBox_Classified = true;
 			}
 			if(ABox)
-				rel2Factory.ABox_Classified = true;
+				ABox_Classified = true;
 		}
 
 //	public int countersubsumers(){
@@ -433,8 +435,8 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		loadOntology();
 		// if current_Precompute is un-empty, compute it;
 		// otherwise, classify none;
-		rel2Factory.TBox_Classified = false;
-		rel2Factory.ABox_Classified = false;
+		TBox_Classified = false;
+		ABox_Classified = false;
 		precomputeInferences();
 	}
 
@@ -712,7 +714,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		{
 			throw(new InconsistentOntologyException());
 		}
-		if(!rel2Factory.TBox_Classified)
+		if(!TBox_Classified)
 			precomputeInferences(InferenceType.CLASS_HIERARCHY);
 		OWLClassNode equivalence = new OWLClassNode();
 		REXClassExpressionImpl desc = rel2Factory.getREXClassExpression(concept);
@@ -1162,7 +1164,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		{
 			throw(new InconsistentOntologyException());
 		}
-		if(!rel2Factory.TBox_Classified)
+		if(!TBox_Classified)
 			precomputeInferences(InferenceType.CLASS_HIERARCHY);
 		OWLClassNodeSet	descendants = new OWLClassNodeSet();
 		REXClassExpressionImpl desc = rel2Factory.getREXClassExpression(concept);
@@ -1438,7 +1440,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		{
 			throw(new InconsistentOntologyException());
 		}
-		if(!rel2Factory.TBox_Classified)
+		if(!TBox_Classified)
 			precomputeInferences(InferenceType.CLASS_HIERARCHY);
 		OWLClassNodeSet	ancestors = new OWLClassNodeSet();
 		REXClassExpressionImpl desc = rel2Factory.getREXClassExpression(concept);
@@ -1697,7 +1699,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		{
 			throw(new InconsistentOntologyException());
 		}
-		if(!rel2Factory.ABox_Classified)
+		if(!ABox_Classified)
 			precomputeInferences(InferenceType.CLASS_ASSERTIONS);
 		OWLClassNodeSet types = new OWLClassNodeSet();
 		REXIndividualImpl indi = rel2Factory.getREXIndividual(arg0);
@@ -1753,7 +1755,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 		{
 			throw(new InconsistentOntologyException());
 		}
-		if(!rel2Factory.TBox_Classified)
+		if(!TBox_Classified)
 			precomputeInferences(InferenceType.CLASS_HIERARCHY);
 		return unsats;
 	}
@@ -1792,7 +1794,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 	@Override
 	public boolean isConsistent() {
 		// TODO Auto-generated method stub
-		if(!rel2Factory.ABox_Classified)
+		if(!ABox_Classified)
 			precomputeInferences(InferenceType.CLASS_ASSERTIONS);
 		return rel2Factory.consistency;
 	}
@@ -1914,8 +1916,8 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 			loadOntology();
 			// if current_Precompute is un-empty, compute it;
 			// otherwise, classify none;
-			rel2Factory.TBox_Classified = false;
-			rel2Factory.ABox_Classified = false;
+			TBox_Classified = false;
+			ABox_Classified = false;
 			precomputeInferences();
 		}
 
@@ -1948,7 +1950,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 			// if TBox not classified and ABox classified, impossible;
 			// if TBox classified and ABox classified, then classify none;
 //			classify(false,!rel2Factory.ABox_Classified);
-			ABox = !rel2Factory.ABox_Classified;
+			ABox = !ABox_Classified;
 		}
 		// decide if want to do TBox reasoning only
 		if(current_Precompute.contains(InferenceType.CLASS_HIERARCHY)
@@ -1960,7 +1962,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 			// if TBox not classified, then classify TBox;
 			// if TBox classified, then classify none;
 //			classify(!rel2Factory.TBox_Classified,false);
-			TBox = !rel2Factory.TBox_Classified;
+			TBox = !TBox_Classified;
 		}
 		try {
 			classify(TBox, ABox);

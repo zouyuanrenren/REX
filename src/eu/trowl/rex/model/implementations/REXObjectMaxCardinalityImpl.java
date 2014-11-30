@@ -58,5 +58,15 @@ public class REXObjectMaxCardinalityImpl extends REXClassExpressionImpl
 		filler.RHS();
 	}
 
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		if(complement != null)
+			return complement;
+		if(filler.mins.containsKey(cardinalityValue+1))
+			complement = filler.mins.get(cardinalityValue+1).get(prop);
+		return complement;
+	}
+
 
 }

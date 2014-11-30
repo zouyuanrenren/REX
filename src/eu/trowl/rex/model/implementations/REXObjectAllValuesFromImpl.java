@@ -46,4 +46,15 @@ public class REXObjectAllValuesFromImpl extends REXClassExpressionImpl
 		prop.onRHSAllValuesFrom = true;
 		filler.RHS();
 	}
+
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		if(complement != null)
+			return complement;
+		REXClassExpressionImpl fillerComp = filler.testComplement();
+		if(fillerComp != null)
+			complement = prop.somes.get(fillerComp);
+		return complement;
+	}
 }

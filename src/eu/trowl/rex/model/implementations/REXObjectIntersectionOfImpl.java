@@ -53,4 +53,16 @@ public class REXObjectIntersectionOfImpl extends REXClassExpressionImpl
 			conjunct.RHS();
 	}
 
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		if(complement != null)
+			return complement;
+		REXClassExpressionImpl firstComp = intersects.get(0).testComplement();
+		REXClassExpressionImpl secondComp = intersects.get(1).testComplement();
+		if(firstComp != null && secondComp != null)
+			complement = firstComp.Ors.get(secondComp);
+		return complement;
+	}
+
 }

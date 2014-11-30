@@ -18,5 +18,10 @@ public class REXCardinalityAtomic extends REXClassExpressionImpl {
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		return complement;
+	}
 
 }

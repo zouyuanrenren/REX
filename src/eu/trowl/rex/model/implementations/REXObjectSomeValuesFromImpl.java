@@ -48,4 +48,15 @@ public class REXObjectSomeValuesFromImpl extends REXClassExpressionImpl
 		// TODO Auto-generated method stub
 		filler.RHS();
 	}
+
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		if(complement != null)
+			return complement;
+		REXClassExpressionImpl fillerComp = filler.testComplement();
+		if(fillerComp != null)
+			complement = prop.alls.get(fillerComp);
+		return complement;
+	}
 }

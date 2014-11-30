@@ -111,8 +111,6 @@ public class REXDataFactory {
 
 	public boolean debug = false;
 
-	public boolean TBox_Classified = false;
-	public boolean ABox_Classified = false;
 
 	OWLDataFactory factory;
 
@@ -151,18 +149,30 @@ public class REXDataFactory {
 		return newclazz;
 	}
 
-	public  REXClassExpressionImpl getREXObjectIntersectionOf(List<OWLClassExpression> operands){
+	public  REXClassExpressionImpl getREXObjectIntersectionOf(List<OWLClassExpression> operands, int next){
 
-		if(operands.size() == 1)
-			return getREXClassExpression(operands.get(0));
+		if(next == operands.size() -1)
+			return getREXClassExpression(operands.get(next));
 
-		REXClassExpressionImpl leftConjunct = getREXClassExpression(operands.remove(0));
-		REXClassExpressionImpl rightConjunct = getREXObjectIntersectionOf(operands);
+		REXClassExpressionImpl leftConjunct = getREXClassExpression(operands.get(next));
+		REXClassExpressionImpl rightConjunct = getREXObjectIntersectionOf(operands, next+1);
 
 		return getREXObjectIntersectionOf(leftConjunct, rightConjunct);
 
 	}
 
+	public REXClassExpressionImpl getREXObjectUnionOf(
+			List<OWLClassExpression> operands, int next) {
+		// TODO Auto-generated method stub
+		if(next == operands.size())
+			return getREXClassExpression(operands.get(next));
+		
+		
+		REXClassExpressionImpl leftDisjunct = getREXClassExpression(operands.get(next));
+		REXClassExpressionImpl rightDisjunct = getREXObjectUnionOf(operands, next+1);
+
+		return getREXObjectUnionOf(leftDisjunct, rightDisjunct);
+	}
 
 	public  REXClassExpressionImpl getREXObjectSomeValuesFrom(OWLObjectPropertyExpression property, OWLClassExpression clazz){
 		REXClassExpressionImpl	filler = getREXClassExpression(clazz);
@@ -173,6 +183,28 @@ public class REXDataFactory {
 		return getREXObjectSomeValuesFrom(role, filler);
 	}
 
+
+
+	public REXClassExpressionImpl getREXObjectAllValuesFrom(
+			OWLObjectPropertyExpression property, OWLClassExpression clazz) {
+		// TODO Auto-generated method stub
+		REXClassExpressionImpl filler = getREXClassExpression(clazz);
+		if(filler == top)
+			return top;
+		REXObjectPropertyExpressionImpl role = getREXObjectPropertyExpression(property);
+		
+		return getREXObjectAllValuesFrom(role, filler);
+	}
+
+	public REXClassExpressionImpl getREXObjectMaxCardinality(int cardinality,
+			OWLObjectPropertyExpression property, OWLClassExpression filler) {
+		// TODO Auto-generated method stub
+		if(cardinality < 0)
+			return bottom;
+		if(cardinality == 0)
+			return getREXObjectAllValuesFrom(property, filler.getComplementNNF());
+		return getREXObjectMaxCardinality(cardinality, getREXObjectPropertyExpression(property), getREXClassExpression(filler));
+	}
 
 
 	public  REXSubClassOfImpl getREXSubClassOf(
@@ -351,21 +383,6 @@ public class REXDataFactory {
 		return newAnd;
 	}
 
-	REXClassExpressionImpl getREXObjectMaxCardinality(
-			int cardinality,
-			REXObjectPropertyExpressionImpl role,
-			REXClassExpressionImpl filler) {
-		// TODO Auto-generated method stub
-		REXClassExpressionImpl min = getREXObjectMinCardinality(cardinality+1,role,filler);
-		REXClassExpressionImpl max = min.complement;
-		if(max == null)
-		{
-			max = getREXObjectComplementOf(min);
-			min.LHS();
-		}
-		return max;
-	}
-
 	REXClassExpressionImpl getREXObjectMinCardinality(
 			int cardinality, REXObjectPropertyExpressionImpl role,
 			REXClassExpressionImpl filler) {
@@ -454,7 +471,7 @@ public class REXDataFactory {
 //	}
 
 
-	private  REXObjectAllValuesFromImpl getREXObjectAllValuesFrom(
+	REXObjectAllValuesFromImpl getREXObjectAllValuesFrom(
 			REXObjectPropertyExpressionImpl role, REXClassExpressionImpl filler) {
 		// TODO Auto-generated method stub
 		REXObjectAllValuesFromImpl newAll = role.alls.get(filler);
@@ -508,6 +525,36 @@ public class REXDataFactory {
 		return newOr;
 	}
 
+	REXClassExpressionImpl getREXObjectMaxCardinality(
+				int cardinality,
+				REXObjectPropertyExpressionImpl role,
+				REXClassExpressionImpl filler) {
+			// TODO Auto-generated method stub
+	//		REXClassExpressionImpl min = getREXObjectMinCardinality(cardinality+1,role,filler);
+	//		REXClassExpressionImpl max = min.complement;
+	//		if(max == null)
+	//		{
+	//			max = getREXObjectComplementOf(min);
+	//			min.LHS();
+	//		}
+			HashMap<REXObjectPropertyExpressionImpl, REXObjectMaxCardinalityImpl> maxs = filler.maxs.get(cardinality);
+			if(maxs == null)
+			{
+				maxs = new HashMap<REXObjectPropertyExpressionImpl, REXObjectMaxCardinalityImpl>();
+				filler.maxs.put(cardinality, maxs);
+			}
+			REXObjectMaxCardinalityImpl newMax = maxs.get(role);
+			if(newMax == null)
+			{
+				newMax = new REXObjectMaxCardinalityImpl(cardinality, role, filler);
+				maxs.put(role, newMax);
+//				newMax.getProperty().somes.put(newMax.getFiller(), newMax);
+				//			classExpressions.add(newMin);
+			}
+			return newMax;
+		}
+
+
 	private  REXSubClassOfImpl getREXSubClassOfAllValuesFrom(
 			REXClassExpressionImpl C,
 			REXClassExpressionImpl D) {
@@ -524,5 +571,7 @@ public class REXDataFactory {
 		D.RHS();
 		return C.subMax1Axioms.get(D);
 	}
+
+
 
 }

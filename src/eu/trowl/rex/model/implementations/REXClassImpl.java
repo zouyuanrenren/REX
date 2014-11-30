@@ -53,4 +53,10 @@ public class REXClassImpl extends REXClassExpressionImpl implements REXClass {
 		
 	}
 
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		return complement;
+	}
+
 }

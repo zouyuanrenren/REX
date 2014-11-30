@@ -54,22 +54,24 @@ public class REXClassExpressionBuilder implements
 	@Override
 	public REXClassExpressionImpl visit(OWLObjectIntersectionOf clazz) {
 		// TODO Auto-generated method stub
-		return factory.getREXObjectIntersectionOf(clazz.getOperandsAsList());
+		return factory.getREXObjectIntersectionOf(clazz.getOperandsAsList(),0);
 	}
 
 	@Override
 	public REXClassExpressionImpl visit(OWLObjectUnionOf clazz) {
 		// TODO Auto-generated method stub
-		REXClassExpressionImpl intersection =  factory.getREXClassExpression(clazz.getComplementNNF());
-		REXClassExpressionImpl union = intersection.complement;
-		if(union == null)
-		{
-//			union = getREL2ApproximationName(exp);
-			union = factory.getREXObjectComplementOf(intersection);
-//		union.complement = intersection;
-//		intersection.complement = union;
-		intersection.LHS();
-		}
+//		REXClassExpressionImpl intersection =  factory.getREXClassExpression(clazz.getComplementNNF());
+//		REXClassExpressionImpl union = intersection.complement;
+//		if(union == null)
+//		{
+////			union = getREL2ApproximationName(exp);
+//			union = factory.getREXObjectComplementOf(intersection);
+////		union.complement = intersection;
+////		intersection.complement = union;
+//		intersection.LHS();
+//		}
+		REXClassExpressionImpl union = factory.getREXObjectUnionOf(clazz.getOperandsAsList(),0);
+		union.testComplement();
 		return union;
 	}
 
@@ -91,16 +93,18 @@ public class REXClassExpressionBuilder implements
 	@Override
 	public REXClassExpressionImpl visit(OWLObjectAllValuesFrom clazz) {
 		// TODO Auto-generated method stub
-		REXClassExpressionImpl some = factory.getREXClassExpression(clazz.getComplementNNF());
-		REXClassExpressionImpl all = some.complement;
-		if(all == null)
-		{
-//			all = getREL2ApproximationName(clazz);
-			all = factory.getREXObjectComplementOf(some);
-//		some.complement = all;
-//		all.complement = some;
-		some.LHS();
-		}
+//		REXClassExpressionImpl some = factory.getREXClassExpression(clazz.getComplementNNF());
+//		REXClassExpressionImpl all = some.complement;
+//		if(all == null)
+//		{
+////			all = getREL2ApproximationName(clazz);
+//			all = factory.getREXObjectComplementOf(some);
+////		some.complement = all;
+////		all.complement = some;
+//		some.LHS();
+//		}
+		REXClassExpressionImpl all = factory.getREXObjectAllValuesFrom(clazz.getProperty(), clazz.getFiller());
+		all.testComplement();
 		return all;
 	}
 
@@ -128,7 +132,9 @@ public class REXClassExpressionBuilder implements
 	@Override
 	public REXClassExpressionImpl visit(OWLObjectMaxCardinality clazz) {
 		// TODO Auto-generated method stub
-		return factory.getREXObjectMaxCardinality(clazz.getCardinality(), factory.getREXObjectPropertyExpression(clazz.getProperty()), factory.getREXClassExpression(clazz.getFiller()));
+		REXClassExpressionImpl max =  factory.getREXObjectMaxCardinality(clazz.getCardinality(), clazz.getProperty(), clazz.getFiller());
+		max.testComplement();
+		return max;
 	}
 
 	@Override
@@ -165,13 +171,16 @@ public class REXClassExpressionBuilder implements
 	@Override
 	public REXClassExpressionImpl visit(OWLDataAllValuesFrom clazz) {
 		// TODO Auto-generated method stub
-		REXClassExpressionImpl some = clazz.getComplementNNF().accept(this);
-		REXClassExpressionImpl all = some.complement;
-		if(all == null)
-		{
-			all = factory.getREXObjectComplementOf(some);
-//		some.LHS();
-		}
+//		REXClassExpressionImpl some = clazz.getComplementNNF().accept(this);
+//		REXClassExpressionImpl all = some.complement;
+//		if(all == null)
+//		{
+//			all = factory.getREXObjectComplementOf(some);
+////		some.LHS();
+//		}
+//		return all;
+		REXClassExpressionImpl all = factory.getREXObjectAllValuesFrom(factory.getREXDataPropertyExpression(clazz.getProperty()), factory.getREXDataRange(clazz.getFiller()));
+		all.testComplement();
 		return all;
 	}
 
@@ -201,7 +210,13 @@ public class REXClassExpressionBuilder implements
 	@Override
 	public REXClassExpressionImpl visit(OWLDataMaxCardinality clazz) {
 		// TODO Auto-generated method stub
-		return factory.getREXObjectMaxCardinality(clazz.getCardinality(), factory.getREXDataPropertyExpression(clazz.getProperty()), factory.getREXDataRange(clazz.getFiller()));
+		if(clazz.getCardinality() < 0)
+			return factory.bottom;
+//		if(clazz.getCardinality() == 0)
+//			return getREXObjectAllValuesFrom(clazz.getProperty(), clazz.getFiller().filler.getComplementNNF());
+		REXClassExpressionImpl max = factory.getREXObjectMaxCardinality(clazz.getCardinality(), factory.getREXDataPropertyExpression(clazz.getProperty()), factory.getREXDataRange(clazz.getFiller()));
+		max.testComplement();
+		return max;
 	}
 
 }
