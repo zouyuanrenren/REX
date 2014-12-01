@@ -1,0 +1,682 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY swrl "http://www.w3.org/2003/11/swrl#" >
+    <!ENTITY swrlb "http://www.w3.org/2003/11/swrlb#" >
+    <!ENTITY bookstore "http://www.cs4021/bookstore.owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY protege "http://protege.stanford.edu/plugins/owl/protege#" >
+    <!ENTITY xsp "http://www.owl-ontologies.com/2005/08/07/xsp.owl#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.cs4021/bookstoreTest1.owl#"
+     xml:base="http://www.cs4021/bookstoreTest1.owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+     xmlns:bookstore="http://www.cs4021/bookstore.owl#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.cs4021/bookstoreTest1.owl"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#hasAuthor -->
+
+    <owl:ObjectProperty rdf:about="&bookstore;hasAuthor"/>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#hasBook -->
+
+    <owl:ObjectProperty rdf:about="&bookstore;hasBook"/>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#hasBuyer -->
+
+    <owl:ObjectProperty rdf:about="&bookstore;hasBuyer"/>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#hasSubject -->
+
+    <owl:ObjectProperty rdf:about="&bookstore;hasSubject"/>
+    
+
+
+    <!-- http://www.cs4021/bookstoreTest1.owl#hasMadePurchase -->
+
+    <owl:ObjectProperty rdf:about="http://www.cs4021/bookstoreTest1.owl#hasMadePurchase">
+        <owl:inverseOf rdf:resource="&bookstore;hasBuyer"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cs4021/bookstoreTest1.owl#hasWritten -->
+
+    <owl:ObjectProperty rdf:about="http://www.cs4021/bookstoreTest1.owl#hasWritten">
+        <owl:inverseOf rdf:resource="&bookstore;hasAuthor"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#hasName -->
+
+    <owl:DatatypeProperty rdf:about="&bookstore;hasName"/>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#hasTitle -->
+
+    <owl:DatatypeProperty rdf:about="&bookstore;hasTitle"/>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#subjectName -->
+
+    <owl:DatatypeProperty rdf:about="&bookstore;subjectName"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Alien -->
+
+    <owl:Class rdf:about="&bookstore;Alien">
+        <rdfs:subClassOf rdf:resource="&bookstore;SciFi"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Book -->
+
+    <owl:Class rdf:about="&bookstore;Book"/>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#BookSubject -->
+
+    <owl:Class rdf:about="&bookstore;BookSubject"/>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Cyberpunk -->
+
+    <owl:Class rdf:about="&bookstore;Cyberpunk">
+        <rdfs:subClassOf rdf:resource="&bookstore;SciFi"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Fantasy -->
+
+    <owl:Class rdf:about="&bookstore;Fantasy">
+        <rdfs:subClassOf rdf:resource="&bookstore;Fiction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Fiction -->
+
+    <owl:Class rdf:about="&bookstore;Fiction">
+        <rdfs:subClassOf rdf:resource="&bookstore;BookSubject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Fishing -->
+
+    <owl:Class rdf:about="&bookstore;Fishing">
+        <rdfs:subClassOf rdf:resource="&bookstore;nonFiction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Ocean_fishing -->
+
+    <owl:Class rdf:about="&bookstore;Ocean_fishing">
+        <rdfs:subClassOf rdf:resource="&bookstore;Fishing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Popular_science -->
+
+    <owl:Class rdf:about="&bookstore;Popular_science">
+        <rdfs:subClassOf rdf:resource="&bookstore;Science"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Purchase -->
+
+    <owl:Class rdf:about="&bookstore;Purchase"/>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#River_fishing -->
+
+    <owl:Class rdf:about="&bookstore;River_fishing">
+        <rdfs:subClassOf rdf:resource="&bookstore;Fishing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#SciFi -->
+
+    <owl:Class rdf:about="&bookstore;SciFi">
+        <rdfs:subClassOf rdf:resource="&bookstore;Fiction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Science -->
+
+    <owl:Class rdf:about="&bookstore;Science">
+        <rdfs:subClassOf rdf:resource="&bookstore;nonFiction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Scientific_literature -->
+
+    <owl:Class rdf:about="&bookstore;Scientific_literature">
+        <rdfs:subClassOf rdf:resource="&bookstore;Science"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Space_drama -->
+
+    <owl:Class rdf:about="&bookstore;Space_drama">
+        <rdfs:subClassOf rdf:resource="&bookstore;SciFi"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#nonFiction -->
+
+    <owl:Class rdf:about="&bookstore;nonFiction">
+        <rdfs:subClassOf rdf:resource="&bookstore;BookSubject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="&owl;Thing"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#A_Brief_History_of_Time -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;A_Brief_History_of_Time">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">A Brief History of Time</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;Hawking"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;popularscience"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;science"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#David -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;David">
+        <bookstore:hasName rdf:datatype="&xsd;string">David</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Dune -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Dune">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">Dune</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;Frank_Herbert"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fiction"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;scifi"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;spacedrama"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Dune2 -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Dune2">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">Dune2</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;Frank_Herbert"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fiction"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;scifi"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;spacedrama"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Edward -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Edward">
+        <bookstore:hasName rdf:datatype="&xsd;string">Edward</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Fellow_of_the_Ring -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Fellow_of_the_Ring">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">the Fellowship of the Ring</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;Tolkien"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fantasy"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fiction"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Fly_Fishing -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Fly_Fishing">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">Fly Fishing</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;J_R_Hartley"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fishing"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;nonfiction"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;riverfishing"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Frank_Herbert -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Frank_Herbert">
+        <bookstore:hasName rdf:datatype="&xsd;string">Frank Herbert</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Hawking -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Hawking">
+        <bookstore:hasName rdf:datatype="&xsd;string">HawKing</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Herman_Melville -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Herman_Melville">
+        <bookstore:hasName rdf:datatype="&xsd;string">Herman Melville</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#J_R_Hartley -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;J_R_Hartley">
+        <bookstore:hasName rdf:datatype="&xsd;string">J. R. Hartley</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Jeff -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Jeff">
+        <bookstore:hasName rdf:datatype="&xsd;string">Jeff</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Jek -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Jek">
+        <bookstore:hasName rdf:datatype="&xsd;string">Jek</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Moby_Dick -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Moby_Dick">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">Moby Dick</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;Herman_Melville"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fishing"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;nonfiction"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;oceanfishing"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Purchase_1 -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Purchase_1">
+        <rdf:type rdf:resource="&bookstore;Purchase"/>
+        <bookstore:hasBuyer rdf:resource="&bookstore;Jek"/>
+        <bookstore:hasBook rdf:resource="&bookstore;Moby_Dick"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Purchase_17 -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Purchase_17">
+        <rdf:type rdf:resource="&bookstore;Purchase"/>
+        <bookstore:hasBuyer rdf:resource="&bookstore;David"/>
+        <bookstore:hasBook rdf:resource="&bookstore;Moby_Dick"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Purchase_38 -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Purchase_38">
+        <rdf:type rdf:resource="&bookstore;Purchase"/>
+        <bookstore:hasBook rdf:resource="&bookstore;Dune"/>
+        <bookstore:hasBuyer rdf:resource="&bookstore;Edward"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Purchase_39 -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Purchase_39">
+        <rdf:type rdf:resource="&bookstore;Purchase"/>
+        <bookstore:hasBook rdf:resource="&bookstore;Fellow_of_the_Ring"/>
+        <bookstore:hasBuyer rdf:resource="&bookstore;Jek"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Purchase_4 -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Purchase_4">
+        <rdf:type rdf:resource="&bookstore;Purchase"/>
+        <bookstore:hasBuyer rdf:resource="&bookstore;David"/>
+        <bookstore:hasBook rdf:resource="&bookstore;Fly_Fishing"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Purchase_5 -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Purchase_5">
+        <rdf:type rdf:resource="&bookstore;Purchase"/>
+        <bookstore:hasBuyer rdf:resource="&bookstore;Jeff"/>
+        <bookstore:hasBook rdf:resource="&bookstore;Moby_Dick"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Purchase_6 -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Purchase_6">
+        <rdf:type rdf:resource="&bookstore;Purchase"/>
+        <bookstore:hasBook rdf:resource="&bookstore;Fly_Fishing"/>
+        <bookstore:hasBuyer rdf:resource="&bookstore;Jek"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Return_of_the_King -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Return_of_the_King">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">Return of the King</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;Tolkien"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fantasy"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fiction"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Roger_Penrose -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Roger_Penrose">
+        <bookstore:hasName rdf:datatype="&xsd;string">Roger Penrose</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Stuart -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Stuart">
+        <bookstore:hasName rdf:datatype="&xsd;string">Stuart</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#The_Emperors_New_Mind -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;The_Emperors_New_Mind">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">The Emperors New Mind</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;Roger_Penrose"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;nonfiction"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;popularscience"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;science"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Tolkien -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Tolkien">
+        <bookstore:hasName rdf:datatype="&xsd;string">Tolkien</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Twin_Tower -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Twin_Tower">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">Twin Tower</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;Tolkien"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fantasy"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fiction"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#Yuan -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;Yuan">
+        <bookstore:hasName rdf:datatype="&xsd;string">Yuan</bookstore:hasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#alien -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;alien">
+        <rdf:type rdf:resource="&bookstore;Alien"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">Alien</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#cyberpunk -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;cyberpunk">
+        <rdf:type rdf:resource="&bookstore;Cyberpunk"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">Cyberpunk</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#fantasy -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;fantasy">
+        <rdf:type rdf:resource="&bookstore;Fantasy"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">Fantasy</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#fiction -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;fiction">
+        <rdf:type rdf:resource="&bookstore;Fiction"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">Fiction</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#fishing -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;fishing">
+        <rdf:type rdf:resource="&bookstore;Fishing"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">Fishing</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#nonfiction -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;nonfiction">
+        <rdf:type rdf:resource="&bookstore;nonFiction"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">Nonfiction</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#oceanfishing -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;oceanfishing">
+        <rdf:type rdf:resource="&bookstore;Ocean_fishing"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">OceanFishing</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#popularscience -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;popularscience">
+        <rdf:type rdf:resource="&bookstore;Popular_science"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">PopularScience</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#riverfishing -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;riverfishing">
+        <rdf:type rdf:resource="&bookstore;River_fishing"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">RiverFishing</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#science -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;science">
+        <rdf:type rdf:resource="&bookstore;Science"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">Science</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#scientific_literature -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;scientific_literature">
+        <rdf:type rdf:resource="&bookstore;Scientific_literature"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">ScientificLiterature</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#scifi -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;scifi">
+        <rdf:type rdf:resource="&bookstore;SciFi"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">Scifi</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#spacedrama -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;spacedrama">
+        <rdf:type rdf:resource="&bookstore;Space_drama"/>
+        <bookstore:subjectName rdf:datatype="&xsd;string">Spacedrama</bookstore:subjectName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#subject -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;subject">
+        <rdf:type rdf:resource="&bookstore;BookSubject"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.cs4021/bookstore.owl#the_Hobbit -->
+
+    <owl:NamedIndividual rdf:about="&bookstore;the_Hobbit">
+        <rdf:type rdf:resource="&bookstore;Book"/>
+        <bookstore:hasTitle rdf:datatype="&xsd;string">the Hobbit</bookstore:hasTitle>
+        <bookstore:hasAuthor rdf:resource="&bookstore;Tolkien"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fantasy"/>
+        <bookstore:hasSubject rdf:resource="&bookstore;fiction"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+

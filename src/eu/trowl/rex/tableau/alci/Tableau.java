@@ -24,15 +24,27 @@ import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
+import eu.trowl.rex.factory.REXDataFactory;
+import eu.trowl.rex.model.implementations.REXClassExpressionImpl;
+import eu.trowl.rex.model.implementations.REXClassImpl;
+import eu.trowl.rex.model.implementations.REXIndividualImpl;
+import eu.trowl.rex.model.implementations.REXObjectAllValuesFromImpl;
+import eu.trowl.rex.model.implementations.REXObjectIntersectionOfImpl;
+import eu.trowl.rex.model.implementations.REXObjectPropertyExpressionImpl;
+import eu.trowl.rex.model.implementations.REXObjectSomeValuesFromImpl;
+import eu.trowl.rex.model.implementations.REXObjectUnionOfImpl;
+import eu.trowl.rex.model.interfaces.REXObjectSomeValuesFrom;
+
 public class Tableau {
-	Set<OWLOntology> ontologies;
+//	Set<OWLOntology> ontologies;
 	OWLDataFactory factory;
-	ArrayList<OWLIndividual> nodes = new ArrayList<OWLIndividual>();
-	HashSet<OWLIndividual> blocked = new HashSet<OWLIndividual>();
+	REXDataFactory rFactory = new REXDataFactory();
+	ArrayList<REXIndividualImpl> nodes = new ArrayList<REXIndividualImpl>();
+//	HashSet<REXIndividualImpl> blocked = new HashSet<REXIndividualImpl>();
 	
-	HashMap<OWLIndividual, HashSet<OWLClassExpression>> nodeLabels = new HashMap<OWLIndividual, HashSet<OWLClassExpression>>();
-	HashMap<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>> edges = new HashMap<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>>();
-	HashSet<OWLClassExpression> globalConstraints = new HashSet<OWLClassExpression>();
+//	HashMap<OWLIndividual, HashSet<OWLClassExpression>> nodeLabels = new HashMap<OWLIndividual, HashSet<OWLClassExpression>>();
+//	HashMap<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>> edges = new HashMap<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>>();
+	HashSet<REXClassExpressionImpl> globalConstraints = new HashSet<REXClassExpressionImpl>();
 	
 	public Tableau()
 	{
@@ -41,52 +53,62 @@ public class Tableau {
 	
 	public Tableau(Set<OWLOntology> ontologies, OWLDataFactory factory)
 	{
-		this.ontologies = ontologies;
+//		this.ontologies = ontologies;
 		this.factory = factory;
+		rFactory.initialise(factory);
 		for(OWLOntology ontology:ontologies)
 			for(OWLLogicalAxiom axiom:ontology.getLogicalAxioms())
+			{
+				rFactory.initialiseAxiom(axiom);
 				if(axiom instanceof OWLEquivalentClassesAxiom)
 				{
 					OWLEquivalentClassesAxiom eq = (OWLEquivalentClassesAxiom) axiom;
 					for(OWLClassExpression exp1:eq.getClassExpressions())
 						for(OWLClassExpression exp2:eq.getClassExpressionsMinus(exp1))
-							globalConstraints.add(factory.getOWLObjectUnionOf(factory.getOWLObjectComplementOf(exp1),exp2));
+							globalConstraints.add(rFactory.getREXClassExpression(factory.getOWLObjectUnionOf(factory.getOWLObjectComplementOf(exp1),exp2)));
 							
 				}
+			}
 		for(OWLOntology ontology:ontologies)
 		{
 			for(OWLNamedIndividual indi:ontology.getIndividualsInSignature())
 			{
-				HashSet<OWLClassExpression> labels = nodeLabels.get(indi);
-				if(labels == null)
+				REXIndividualImpl node = rFactory.getREXIndividual(indi);
+				if(!nodes.contains(node))
 				{
-					labels = new HashSet<OWLClassExpression>();
-					nodes.add(indi);
-					labels.addAll(globalConstraints);
-					nodeLabels.put(indi, labels);
-					for(OWLOntology onto:ontologies)
-						for(OWLClassAssertionAxiom ax:onto.getClassAssertionAxioms(indi))
-//					for(OWLClassExpression exp:indi.getTypes(ontologies))
-						labels.add(ax.getClassExpression().getNNF());
-					HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relations = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
-					edges.put(indi, relations);
-					for(OWLOntology onto:ontologies)
-						for(OWLObjectPropertyAssertionAxiom ax:onto.getObjectPropertyAssertionAxioms(indi))
-//					for(Entry<OWLObjectPropertyExpression, Set<OWLIndividual>> entry:indi.getObjectPropertyValues(onto).entrySet())
-					{
-						HashSet<OWLIndividual> objects = relations.get(ax.getProperty());
-						if(objects == null)
+					nodes.add(node);
+					node.superClasses.addAll(globalConstraints);
+//					for(OWLOntology onto:ontologies)
+//					{
+//						for(OWLClassAssertionAxiom ax:onto.getClassAssertionAxioms(indi))
+//							node.superClasses.add(rFactory.getREXClassExpression(ax.getClassExpression().getNNF()));
+//						for(OWLObjectPropertyAssertionAxiom ax:onto.getObjectPropertyAssertionAxioms(indi))
+//						{
+//							REXObjectPropertyExpressionImpl role = rFactory.getREXObjectPropertyExpression(ax.getProperty());
+//							Set<REXClassExpressionImpl> objs = node.implications.get(role);
+//							if(objs == null)
+//							{
+//								objs = new HashSet<REXClassExpressionImpl>();
+//								node.implications.put(role, objs);
+//							}
+//							objs.add(rFactory.getREXIndividual(ax.getObject()));
+//						}
+//					}
+					for(REXClassExpressionImpl sup:node.getOriginalSuperClasses())
+						if(sup instanceof REXObjectSomeValuesFromImpl && ((REXObjectSomeValuesFromImpl)sup).getFiller() instanceof REXIndividualImpl)
 						{
-							objects = new HashSet<OWLIndividual>();
-							relations.put(ax.getProperty(), objects);
+							REXObjectSomeValuesFromImpl some = (REXObjectSomeValuesFromImpl) sup;
+							Set<REXClassExpressionImpl> objs = node.implications.get(some.getProperty());
+							if(objs == null)
+							{
+								objs = new HashSet<REXClassExpressionImpl>();
+								node.implications.put(some.getProperty(), objs);
+							}
+							objs.add(some.getFiller());
 						}
-						objects.add(ax.getObject());
-					}
-					
-
-				}
-				
-				
+						else
+							node.superClasses.add(sup);
+				}				
 			}
 		}
 	}
@@ -96,12 +118,13 @@ public class Tableau {
 		while(changed)
 		{
 			int index = 0;
-		OWLIndividual next;
+		REXIndividualImpl next;
 		changed = false;
 		do
 		{
 			next = nodes.get(index++);
-			if(blocked.contains(next))
+			if(next.blockedBy != null)
+//			if(blocked.contains(next))
 				continue;
 				
 			// SUB rule
@@ -131,8 +154,8 @@ public class Tableau {
 				changed = true;
 		
 			// block offspring nodes
-			if(!(next instanceof OWLNamedIndividual))
-				checkBlock(next, next);
+			if(changed && !(next instanceof OWLNamedIndividual))
+				checkBlock(next, next, new HashSet<REXIndividualImpl>());
 						
 			
 		}
@@ -145,29 +168,37 @@ public class Tableau {
 		return orRule();
 	}
 
-	private boolean invRule(OWLIndividual node) {
+	private boolean invRule(REXIndividualImpl node) {
 		// TODO Auto-generated method stub
 		boolean changed = false;
-		HashMap<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>> newedges = new HashMap<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>>();
-		if(edges.containsKey(node))
-			for(OWLObjectPropertyExpression edge:edges.get(node).keySet())
-				for(OWLOntology onto:ontologies)
-					for(OWLInverseObjectPropertiesAxiom ax:onto.getInverseObjectPropertyAxioms(edge))
-						for(OWLObjectPropertyExpression inverse:ax.getPropertiesMinus(edge))
+		HashMap<REXIndividualImpl, HashMap<REXObjectPropertyExpressionImpl, HashSet<REXIndividualImpl>>> newedges = new HashMap<REXIndividualImpl, HashMap<REXObjectPropertyExpressionImpl, HashSet<REXIndividualImpl>>>();
+//		HashSet<REXObjectPropertyExpressionImpl> inverses = new HashSet<REXObjectPropertyExpressionImpl>();
+//		if(edges.containsKey(node))
+			for(REXObjectPropertyExpressionImpl prop:node.implications.keySet())
+//				for(OWLOntology onto:ontologies)
+//					for(OWLInverseObjectPropertiesAxiom ax:onto.getInverseObjectPropertyAxioms(edge))
+						for(REXObjectPropertyExpressionImpl superrole:prop.getSuperRoles())
+							if(superrole.getInversePropertyExpression() != null)
+//								inverses.add(superrole.getInversePropertyExpression());
 //				for(OWLObjectPropertyExpression inverse:edge.getInverses(ontologies))
-					for(OWLIndividual object:edges.get(node).get(edge))
-						if(!edges.containsKey(object) || !edges.get(object).containsKey(inverse) || !edges.get(object).get(inverse).contains(node))
+//			for(REXObjectPropertyExpressionImpl prop:node.implications.keySet())
+							{
+								REXObjectPropertyExpressionImpl inverse = superrole.getInversePropertyExpression();
+					for(REXClassExpressionImpl object:node.implications.get(prop))
+						if(object instanceof REXIndividualImpl)
+//							for(REXObjectPropertyExpressionImpl inverse:inverses)
+						if(!object.implications.containsKey(inverse) || !object.implications.get(inverse).contains(node))
 						{
-							HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> newedge = newedges.get(object);
+							HashMap<REXObjectPropertyExpressionImpl, HashSet<REXIndividualImpl>> newedge = newedges.get(object);
 							if(newedge == null)
 							{
-								newedge = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
-								newedges.put(object, newedge);
+								newedge = new HashMap<REXObjectPropertyExpressionImpl, HashSet<REXIndividualImpl>>();
+								newedges.put((REXIndividualImpl) object, newedge);
 							}
-							HashSet<OWLIndividual> objects = newedge.get(inverse);
+							HashSet<REXIndividualImpl> objects = newedge.get(inverse);
 							if(objects == null)
 							{
-								objects = new HashSet<OWLIndividual>();
+								objects = new HashSet<REXIndividualImpl>();
 								newedge.put(inverse, objects);
 							}
 							if(!objects.contains(node))
@@ -176,69 +207,96 @@ public class Tableau {
 								objects.add(node);
 							}
 						}
-		for(OWLIndividual subject:newedges.keySet())
+	}
+		for(REXIndividualImpl subject:newedges.keySet())
 		{
-			HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> edge = edges.get(subject);
-			if(edge == null)
+			for(REXObjectPropertyExpressionImpl prop:newedges.get(subject).keySet())
 			{
-				edge = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
-				edges.put(subject, edge);
-			}
-			for(OWLObjectPropertyExpression relation:newedges.get(subject).keySet())
-			{
-				HashSet<OWLIndividual> objects = edge.get(relation);
-				if(objects == null)
+				Set<REXClassExpressionImpl> objs = subject.implications.get(prop);
+				if(objs == null)
 				{
-					objects = new HashSet<OWLIndividual>();
-					edge.put(relation, objects);
+					objs = new HashSet<REXClassExpressionImpl>();
+					subject.implications.put(prop, objs);
 				}
-				objects.addAll(newedges.get(subject).get(relation));
+				objs.addAll(newedges.get(subject).get(prop));
 			}
+		
+//			HashMap<REXObjectPropertyExpressionImpl, HashSet<REXIndividualImpl>> edge = edges.get(REXIndividualImpl);
+//			if(edge == null)
+//			{
+//				edge = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
+//				edges.put(subject, edge);
+//			}
+//			for(OWLObjectPropertyExpression relation:newedges.get(subject).keySet())
+//			{
+//				HashSet<OWLIndividual> objects = edge.get(relation);
+//				if(objects == null)
+//				{
+//					objects = new HashSet<OWLIndividual>();
+//					edge.put(relation, objects);
+//				}
+//				objects.addAll(newedges.get(subject).get(relation));
+//			}
 		}
 		return changed;
 	}
 
 	// check offspring nodes for blocking
-	void checkBlock(OWLIndividual blockingNode, OWLIndividual blockedParent){
-		if(edges.containsKey(blockedParent))
-			for(OWLObjectPropertyExpression role:edges.get(blockedParent).keySet())
-				for(OWLIndividual child:edges.get(blockedParent).get(role))
-					if(!blocked.contains(child) && nodeLabels.get(blockingNode).containsAll(nodeLabels.get(child)))
-						block(child);
-					else checkBlock(blockingNode, child);
+	void checkBlock(REXIndividualImpl blockingNode, REXIndividualImpl blockedParent, HashSet<REXIndividualImpl> checked){
+		for(REXObjectPropertyExpressionImpl role:blockedParent.implications.keySet())
+			for(REXClassExpressionImpl child:blockedParent.implications.get(role))
+				if(child instanceof REXIndividualImpl && !checked.contains(child) && ((REXIndividualImpl)child).blockedBy == null)
+				{
+					checked.add((REXIndividualImpl) child);
+					if(blockingNode.superClasses.containsAll(child.superClasses))
+						block(blockingNode, (REXIndividualImpl) child);
+					else checkBlock(blockingNode, (REXIndividualImpl) child, checked);
+				}
+//		if(edges.containsKey(blockedParent))
+//			for(OWLObjectPropertyExpression role:edges.get(blockedParent).keySet())
+//				for(OWLIndividual child:edges.get(blockedParent).get(role))
+//					if(!blocked.contains(child) && nodeLabels.get(blockingNode).containsAll(nodeLabels.get(child)))
+//						block(child);
+//					else checkBlock(blockingNode, child);
 	}
 	
 	// blocking offspring nodes
-	void block(OWLIndividual node)
+	void block(REXIndividualImpl blockingNode, REXIndividualImpl node)
 	{
-		blocked.add(node);
-		for(Entry<OWLObjectPropertyExpression, HashSet<OWLIndividual>> objects:edges.get(node).entrySet())
-			for(OWLIndividual child:objects.getValue())
-				if(!blocked.add(node))
-					block(child);
+//		blocked.add(node);
+		node.blockedBy = blockingNode;
+		for(REXObjectPropertyExpressionImpl prop:node.implications.keySet())
+			for(REXClassExpressionImpl obj:node.implications.get(prop))
+				if(obj instanceof REXIndividualImpl)
+					if(((REXIndividualImpl) obj).blockedBy == null)
+						((REXIndividualImpl) obj).blockedBy = blockingNode;
+//		for(Entry<OWLObjectPropertyExpression, HashSet<OWLIndividual>> objects:edges.get(node).entrySet())
+//			for(OWLIndividual child:objects.getValue())
+//				if(!blocked.add(node))
+//					block(child);
 	}
 	
 	// OR rule
 	
 	boolean orRule() throws CloneNotSupportedException
 	{
-		for(OWLIndividual node:nodes)
+		for(REXIndividualImpl node:nodes)
 		{
-			HashSet<OWLClassExpression> labels = nodeLabels.get(node);
-			for(OWLClassExpression exp:labels)
-				if(exp instanceof OWLObjectUnionOf)
+			for(REXClassExpressionImpl exp:node.superClasses)
+			{
+				if(exp instanceof REXObjectUnionOfImpl)
 				{
-					OWLObjectUnionOf union = (OWLObjectUnionOf) exp;
+					REXObjectUnionOfImpl union = (REXObjectUnionOfImpl) exp;
 					boolean foundOperand = false;
-					for(OWLClassExpression operand:union.getOperands())
-						if(labels.contains(operand))
+					for(REXClassExpressionImpl operand:union.getEntities())
+						if(node.superClasses.contains(operand))
 						{
 							foundOperand = true;
 							break;
 						}
 					if(!foundOperand)
 					{
-						for(OWLClassExpression operand:union.getOperands())
+						for(REXClassExpressionImpl operand:union.getEntities())
 						{
 							Tableau newTableau = this.clone();
 							newTableau.add(node, operand);
@@ -248,140 +306,231 @@ public class Tableau {
 						return false;
 					}
 				}
+			}
 		}
+//		for(OWLIndividual node:nodes)
+//		{
+//			HashSet<OWLClassExpression> labels = nodeLabels.get(node);
+//			for(OWLClassExpression exp:labels)
+//				if(exp instanceof OWLObjectUnionOf)
+//				{
+//					OWLObjectUnionOf union = (OWLObjectUnionOf) exp;
+//					boolean foundOperand = false;
+//					for(OWLClassExpression operand:union.getOperands())
+//						if(labels.contains(operand))
+//						{
+//							foundOperand = true;
+//							break;
+//						}
+//					if(!foundOperand)
+//					{
+//						for(OWLClassExpression operand:union.getOperands())
+//						{
+//							Tableau newTableau = this.clone();
+//							newTableau.add(node, operand);
+//							if(newTableau.check())
+//								return true;
+//						}
+//						return false;
+//					}
+//				}
+//		}
 		return true;
 	}
 	
-	void add(OWLIndividual indi, OWLClassExpression exp)
+	public void add(OWLIndividual individual, OWLClassExpression clazz) {
+		// TODO Auto-generated method stub
+		add(rFactory.getREXIndividual(individual), rFactory.getREXClassExpression(clazz));
+	}
+
+	void add(REXIndividualImpl indi, REXClassExpressionImpl exp)
 	{
-		HashSet<OWLClassExpression> labels = nodeLabels.get(indi);
-		if(labels == null)
+		if(!nodes.contains(indi) || !indi.superClasses.contains(exp))
 		{
-			labels = new HashSet<OWLClassExpression>();
-			labels.addAll(globalConstraints);
 			nodes.add(indi);
-			nodeLabels.put(indi, labels);
-			HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relations = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
-			edges.put(indi, relations);
+			indi.superClasses.add(exp);
 		}
-		labels.add(exp.getNNF());
+//		HashSet<OWLClassExpression> labels = nodeLabels.get(indi);
+//		if(labels == null)
+//		{
+//			labels = new HashSet<OWLClassExpression>();
+//			labels.addAll(globalConstraints);
+//			nodes.add(indi);
+//			nodeLabels.put(indi, labels);
+//			HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relations = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
+//			edges.put(indi, relations);
+//		}
+//		labels.add(exp.getNNF());
 
 			
 	}
 	
 	// EXISTS rule
 	
-	boolean existsRule(OWLIndividual node)
+	boolean existsRule(REXIndividualImpl node)
 	{
 		boolean changed = false;
-		for(OWLClassExpression exp:nodeLabels.get(node))
-			if(exp instanceof OWLObjectSomeValuesFrom)
+		for(REXClassExpressionImpl exp:node.superClasses)
+			if(exp instanceof REXObjectSomeValuesFromImpl)
 			{
-				OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) exp;
-				OWLObjectPropertyExpression role = some.getProperty();
-				OWLClassExpression filler = some.getFiller();
-				HashSet<OWLIndividual> objects = edges.get(node).get(role);
-				if(objects == null)
+				REXObjectSomeValuesFromImpl some = (REXObjectSomeValuesFromImpl) exp;
+				if(!node.implications.containsKey(some.getProperty()))
 				{
 					changed = true;
-					OWLIndividual newindi = factory.getOWLAnonymousIndividual();
-					nodes.add(newindi);
-					HashSet<OWLClassExpression> labels = new HashSet<OWLClassExpression>();
-					labels.add(filler.getNNF());
-					labels.addAll(globalConstraints);
-					nodeLabels.put(newindi, labels);
-					HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relations = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
-					edges.put(newindi, relations);
-					objects = new HashSet<OWLIndividual>();
-					objects.add(newindi);
-					edges.get(node).put(role.asOWLObjectProperty(), objects);
-					
 				}
+				else
+				{
+					boolean foundObject = false;
+					for(REXClassExpressionImpl obj:node.implications.get(some.getProperty()))
+						if(obj instanceof REXIndividualImpl)
+						{
+							foundObject = true;
+							break;
+						}
+					if(!foundObject)
+						changed = true;
+				}
+				if(changed)
+				{
+					REXIndividualImpl newindi = new REXIndividualImpl();
+					nodes.add(newindi);
+					newindi.superClasses.add(some.getFiller());
+					newindi.superClasses.addAll(globalConstraints);
+					HashSet<REXClassExpressionImpl> objs = new HashSet<REXClassExpressionImpl>();
+					objs.add(newindi);
+					node.implications.put(some.getProperty(), objs);
+				}
+				
 			}
+		
+//		for(OWLClassExpression exp:nodeLabels.get(node))
+//			if(exp instanceof OWLObjectSomeValuesFrom)
+//			{
+//				OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) exp;
+//				OWLObjectPropertyExpression role = some.getProperty();
+//				OWLClassExpression filler = some.getFiller();
+//				HashSet<OWLIndividual> objects = edges.get(node).get(role);
+//				if(objects == null)
+//				{
+//					changed = true;
+//					OWLIndividual newindi = factory.getOWLAnonymousIndividual();
+//					nodes.add(newindi);
+//					HashSet<OWLClassExpression> labels = new HashSet<OWLClassExpression>();
+//					labels.add(filler.getNNF());
+//					labels.addAll(globalConstraints);
+//					nodeLabels.put(newindi, labels);
+//					HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relations = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
+//					edges.put(newindi, relations);
+//					objects = new HashSet<OWLIndividual>();
+//					objects.add(newindi);
+//					edges.get(node).put(role.asOWLObjectProperty(), objects);
+//					
+//				}
+//			}
 		return changed;
 	}
 	
 	// FORALL rule	
-	boolean forallRule(OWLIndividual node)
+	boolean forallRule(REXIndividualImpl node)
 	{
 		boolean changed = false;
-		HashMap<OWLIndividual, HashSet<OWLClassExpression>> toadd = new HashMap<OWLIndividual, HashSet<OWLClassExpression>>();
-		for(OWLClassExpression label:nodeLabels.get(node))
-			if(label instanceof OWLObjectAllValuesFrom)
+		HashMap<REXClassExpressionImpl, HashSet<REXClassExpressionImpl>> toadd = new HashMap<REXClassExpressionImpl, HashSet<REXClassExpressionImpl>>();
+		for(REXClassExpressionImpl label:node.superClasses)
+			if(label instanceof REXObjectAllValuesFromImpl)
 			{
-				OWLObjectAllValuesFrom all = (OWLObjectAllValuesFrom) label;
-				if(edges.get(node) !=null && edges.get(node).get(all.getProperty()) != null)
-					for(OWLIndividual object:edges.get(node).get(all.getProperty()))
-						if(!nodeLabels.get(object).contains(all.getFiller()))
+				REXObjectAllValuesFromImpl all = (REXObjectAllValuesFromImpl) label;
+				if(node.implications.containsKey(all.getProperty()))
+					for(REXClassExpressionImpl obj:node.implications.get(all.getProperty()))
+						if(obj instanceof REXIndividualImpl && !obj.superClasses.contains(all.getFiller()))
 						{
-							changed = true;
-							HashSet<OWLClassExpression> newlabels = toadd.get(object);
+							HashSet<REXClassExpressionImpl> newlabels = toadd.get(obj);
 							if(newlabels == null)
 							{
-								newlabels = new HashSet<OWLClassExpression>();
-								toadd.put(object, newlabels);
+								newlabels = new HashSet<REXClassExpressionImpl>();
+								toadd.put(obj, newlabels);
 							}
 							newlabels.add(all.getFiller());
 						}
+//				if(edges.get(node) !=null && edges.get(node).get(all.getProperty()) != null)
+//					for(OWLIndividual object:edges.get(node).get(all.getProperty()))
+//						if(!nodeLabels.get(object).contains(all.getFiller()))
+//						{
+//							changed = true;
+//							HashSet<OWLClassExpression> newlabels = toadd.get(object);
+//							if(newlabels == null)
+//							{
+//								newlabels = new HashSet<OWLClassExpression>();
+//								toadd.put(object, newlabels);
+//							}
+//							newlabels.add(all.getFiller());
+//						}
 			}
-		for(OWLIndividual object:toadd.keySet())
-			nodeLabels.get(object).addAll(toadd.get(object));
+		for(REXClassExpressionImpl object:toadd.keySet())
+			object.superClasses.addAll(toadd.get(object));
+//			nodeLabels.get(object).addAll(toadd.get(object));
 		return changed;
 	}
 	
 	// SUB rule
-	boolean subRule(OWLIndividual node)
+	boolean subRule(REXIndividualImpl node)
 	{
 		boolean changed = false;
-		HashSet<OWLClassExpression> labels = nodeLabels.get(node);
+//		HashSet<OWLClassExpression> labels = nodeLabels.get(node);
 		
-		HashSet<OWLClassExpression> toAdd = new HashSet<OWLClassExpression>();
-		for(OWLClassExpression exp:labels)
-			if(exp  instanceof OWLClass)
+		HashSet<REXClassExpressionImpl> toAdd = new HashSet<REXClassExpressionImpl>();
+		for(REXClassExpressionImpl exp:node.superClasses)
+			if(exp  instanceof REXClassImpl)
 			{
-				OWLClass atomic = (OWLClass) exp;
-				for(OWLOntology onto:ontologies)
-					for(OWLSubClassOfAxiom ax:onto.getSubClassAxiomsForSubClass(atomic))
+//				OWLClass atomic = (OWLClass) exp;
+//				for(OWLOntology onto:ontologies)
+//					for(OWLSubClassOfAxiom ax:onto.getSubClassAxiomsForSubClass(atomic))
 //				for(OWLClassExpression superClass:atomic.getSuperClasses(ontologies))
+				for(REXClassExpressionImpl superClass:exp.getOriginalSuperClasses())
 				{
-					if(!labels.contains(ax.getSuperClass().getNNF()))
+					if(!node.superClasses.contains(superClass))
 					{
-						toAdd.add(ax.getSuperClass().getNNF());
+						toAdd.add(superClass);
 						changed = true;
 					}
 				}
 			}
 		
-		labels.addAll(toAdd);
+		node.superClasses.addAll(toAdd);
 		
 		return changed;		
 	}
 	
 	// detect clash
-	boolean clash(OWLIndividual node)
+	boolean clash(REXIndividualImpl node)
 	{
-		HashSet<OWLClassExpression> labels = nodeLabels.get(node);
-		if(labels.contains(factory.getOWLNothing()))
+		if(node.superClasses.contains(rFactory.bottom))
 			return true;
-		for(OWLClassExpression exp:labels)
-			if(labels.contains(exp.getComplementNNF()))
+		for(REXClassExpressionImpl exp:node.superClasses)
+			if(node.superClasses.contains(exp.complement))
 				return true;
 		return false;
+//		HashSet<OWLClassExpression> labels = nodeLabels.get(node);
+//		if(labels.contains(factory.getOWLNothing()))
+//			return true;
+//		for(OWLClassExpression exp:labels)
+//			if(labels.contains(exp.getComplementNNF()))
+//				return true;
+//		return false;
 	}
 	
 	// And rule
-	boolean andRule(OWLIndividual node){
-		HashSet<OWLClassExpression> toadd = new HashSet<OWLClassExpression>();
-		HashSet<OWLClassExpression> labels = nodeLabels.get(node);
-		for(OWLClassExpression label:labels)
-			if(label instanceof OWLObjectIntersectionOf)
+	boolean andRule(REXIndividualImpl node){
+		HashSet<REXClassExpressionImpl> toadd = new HashSet<REXClassExpressionImpl>();
+//		HashSet<REXClassExpressionImpl> labels = nodeLabels.get(node);
+		for(REXClassExpressionImpl label:node.superClasses)
+			if(label instanceof REXObjectIntersectionOfImpl)
 			{
-				OWLObjectIntersectionOf and = (OWLObjectIntersectionOf) label;
-				for(OWLClassExpression operand:and.getOperands())
-					if(!labels.contains(operand))
+				REXObjectIntersectionOfImpl and = (REXObjectIntersectionOfImpl) label;
+				for(REXClassExpressionImpl operand:and.getEntities())
+					if(!node.superClasses.contains(operand))
 						toadd.add(operand);
 			}
-		labels.addAll(toadd);
+		node.superClasses.addAll(toadd);
 		if(toadd.size()>0)
 			return true;
 		return false;
@@ -391,27 +540,69 @@ public class Tableau {
 	protected Tableau clone() throws CloneNotSupportedException {
 		// TODO Auto-generated method stub
 		Tableau clone = new Tableau();
-		clone.ontologies = this.ontologies;
+//		clone.ontologies = this.ontologies;
 		clone.factory = this.factory;
-		clone.nodes = new ArrayList<OWLIndividual>(this.nodes);
-		clone.blocked = new HashSet<OWLIndividual>(this.blocked);
-		clone.nodeLabels = new HashMap<OWLIndividual, HashSet<OWLClassExpression>>();
-		for(Entry<OWLIndividual, HashSet<OWLClassExpression>> entry:this.nodeLabels.entrySet())
+		clone.nodes = new ArrayList<REXIndividualImpl>();
+		HashMap<REXIndividualImpl, REXIndividualImpl> map = new HashMap<REXIndividualImpl, REXIndividualImpl>();
+		for(REXIndividualImpl node:nodes)
 		{
-			HashSet<OWLClassExpression> labels = new HashSet<OWLClassExpression>(entry.getValue());
-			clone.nodeLabels.put(entry.getKey(), labels);
+			REXIndividualImpl newnode = new REXIndividualImpl(node.getIRI());
+			clone.nodes.add(newnode);
+			map.put(node, newnode);
 		}
-		for(Entry<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>> entry:this.edges.entrySet())
+		for(REXIndividualImpl node:nodes)
 		{
-			HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relations = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
-			clone.edges.put(entry.getKey(), relations);
-			for(Entry<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relationEntry:entry.getValue().entrySet())
+			REXIndividualImpl newnode = map.get(node);
+			for(REXClassExpressionImpl cls:node.superClasses)
 			{
-				HashSet<OWLIndividual> objects = new HashSet<OWLIndividual>(relationEntry.getValue());
-				relations.put(relationEntry.getKey(), objects);
+				if(cls instanceof REXIndividualImpl)
+					newnode.superClasses.add(map.get(cls));
+				else
+					newnode.superClasses.add(cls);
+			}
+			for(REXObjectPropertyExpressionImpl role:node.implications.keySet())
+			{
+				Set<REXClassExpressionImpl> objs = newnode.implications.get(role);
+				if(objs == null)
+				{
+					objs = new HashSet<REXClassExpressionImpl>();
+					newnode.implications.put(role, objs);
+				}
+				for(REXClassExpressionImpl obj:node.implications.get(role))
+					if(obj instanceof REXIndividualImpl)
+						objs.add(map.get(obj));
+					else
+						objs.add(obj);
 			}
 		}
+//		clone.blocked = new HashSet<OWLIndividual>(this.blocked);
+//		clone.nodeLabels = new HashMap<OWLIndividual, HashSet<OWLClassExpression>>();
+//		for(Entry<OWLIndividual, HashSet<OWLClassExpression>> entry:this.nodeLabels.entrySet())
+//		{
+//			HashSet<OWLClassExpression> labels = new HashSet<OWLClassExpression>(entry.getValue());
+//			clone.nodeLabels.put(entry.getKey(), labels);
+//		}
+//		for(Entry<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>> entry:this.edges.entrySet())
+//		{
+//			HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relations = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
+//			clone.edges.put(entry.getKey(), relations);
+//			for(Entry<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relationEntry:entry.getValue().entrySet())
+//			{
+//				HashSet<OWLIndividual> objects = new HashSet<OWLIndividual>(relationEntry.getValue());
+//				relations.put(relationEntry.getKey(), objects);
+//			}
+//		}
 		return clone;
+	}
+
+	public boolean hasRelation(OWLNamedIndividual subject,
+			OWLObjectPropertyExpression property, OWLNamedIndividual object) {
+		// TODO Auto-generated method stub
+		REXIndividualImpl sub = rFactory.getREXIndividual(subject);
+		REXObjectPropertyExpressionImpl prop = rFactory.getREXObjectPropertyExpression(property);
+		if(sub.implications.containsKey(prop) && sub.implications.get(prop).contains(rFactory.getREXIndividual(object)))
+			return true;
+		return false;
 	}
 
 	

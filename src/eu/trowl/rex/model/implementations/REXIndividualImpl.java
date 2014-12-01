@@ -13,10 +13,16 @@ public class REXIndividualImpl extends REXClassImpl implements REXIndividual {
 
 	public Set<REXIndividualImpl> differentIndividuals = new HashSet<REXIndividualImpl>();
 	
+	public REXIndividualImpl blockedBy = null;
+	
 	public REXIndividualImpl(OWLIndividual indi) {
 		// TODO Auto-generated constructor stub
 		if(indi instanceof OWLNamedIndividual)
 		iri = indi.asOWLNamedIndividual().getIRI();
+	}
+	
+	public REXIndividualImpl(IRI iri){
+		this.iri = iri;
 	}
 	
 	public REXIndividualImpl(){

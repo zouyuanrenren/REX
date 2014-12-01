@@ -1,4 +1,4 @@
-package eu.trowl.owl.rex.owlapi.tests;
+package eu.trowl.rex.owlapi.test;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;

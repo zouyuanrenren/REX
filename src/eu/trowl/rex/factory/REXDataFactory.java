@@ -164,7 +164,7 @@ public class REXDataFactory {
 	public REXClassExpressionImpl getREXObjectUnionOf(
 			List<OWLClassExpression> operands, int next) {
 		// TODO Auto-generated method stub
-		if(next == operands.size())
+		if(next == operands.size() -1)
 			return getREXClassExpression(operands.get(next));
 		
 		

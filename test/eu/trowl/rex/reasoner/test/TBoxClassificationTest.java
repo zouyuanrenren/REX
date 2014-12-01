@@ -1,4 +1,4 @@
-package eu.trowl.owl.rex.tests;
+package eu.trowl.rex.reasoner.test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;

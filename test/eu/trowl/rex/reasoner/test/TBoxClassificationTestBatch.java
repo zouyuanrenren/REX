@@ -1,4 +1,4 @@
-package eu.trowl.owl.rex.tests;
+package eu.trowl.rex.reasoner.test;
 import java.io.File;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;

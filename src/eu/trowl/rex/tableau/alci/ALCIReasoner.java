@@ -66,9 +66,10 @@ public class ALCIReasoner {
 		// TODO Auto-generated method stub
 		Tableau tableau = new Tableau(importClosure, factory);
 		tableau.check();
-		if(tableau.edges.containsKey(subject) && tableau.edges.get(subject).containsKey(property) && tableau.edges.get(subject).get(property).contains(object))
-			return true;
-		return false;
+		return tableau.hasRelation(subject, property, object);
+//		if(tableau.edges.containsKey(subject) && tableau.edges.get(subject).containsKey(property) && tableau.edges.get(subject).get(property).contains(object))
+//			return true;
+//		return false;
 	}
 
 }
