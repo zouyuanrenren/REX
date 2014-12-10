@@ -68,4 +68,13 @@ public class REXObjectUnionOfImpl extends REXClassExpressionImpl
 		return complement;
 	}
 
+	@Override
+	public boolean specifiedBy(REXClassImpl cls) {
+		// TODO Auto-generated method stub
+		for(REXClassExpressionImpl disjunct:operands)
+			if(disjunct.specifiedBy(cls))
+				return true;
+		return false;
+	}
+
 }

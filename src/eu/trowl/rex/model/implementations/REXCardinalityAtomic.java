@@ -23,5 +23,10 @@ public class REXCardinalityAtomic extends REXClassExpressionImpl {
 		// TODO Auto-generated method stub
 		return complement;
 	}
+	@Override
+	public boolean specifiedBy(REXClassImpl cls) {
+		// TODO Auto-generated method stub
+		return filler.specifiedBy(cls);
+	}
 
 }

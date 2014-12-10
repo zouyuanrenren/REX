@@ -1,80 +1,32 @@
 package eu.trowl.rex.factory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataAllValuesFrom;
-import org.semanticweb.owlapi.model.OWLDataComplementOf;
-import org.semanticweb.owlapi.model.OWLDataExactCardinality;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataMaxCardinality;
-import org.semanticweb.owlapi.model.OWLDataMinCardinality;
-import org.semanticweb.owlapi.model.OWLDataOneOf;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
-import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDataRange;
-import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLDatatype;
-import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
-import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
-import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
-import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLFunctionalDataPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLFunctionalObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLInverseFunctionalObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
-import org.semanticweb.owlapi.model.OWLObjectComplementOf;
-import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
-import org.semanticweb.owlapi.model.OWLObjectHasValue;
-import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
-import org.semanticweb.owlapi.model.OWLObjectInverseOf;
-import org.semanticweb.owlapi.model.OWLObjectMaxCardinality;
-import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
-import org.semanticweb.owlapi.model.OWLObjectOneOf;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
-import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
-import org.semanticweb.owlapi.model.OWLSameIndividualAxiom;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
-import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 
+import eu.trowl.rex.absorption.AbsorptionVisitor;
+import eu.trowl.rex.absorption.ConceptAbsorption;
 import eu.trowl.rex.model.implementations.REXClassExpressionImpl;
 import eu.trowl.rex.model.implementations.REXClassImpl;
 import eu.trowl.rex.model.implementations.REXDataPropertyImpl;
 import eu.trowl.rex.model.implementations.REXDatatypeImpl;
 import eu.trowl.rex.model.implementations.REXIndividualImpl;
-import eu.trowl.rex.model.implementations.REXInverseObjectPropertyImpl;
 import eu.trowl.rex.model.implementations.REXLiteralImpl;
 import eu.trowl.rex.model.implementations.REXObjectAllValuesFromImpl;
 import eu.trowl.rex.model.implementations.REXObjectComplementOfImpl;
 import eu.trowl.rex.model.implementations.REXObjectIntersectionOfImpl;
-import eu.trowl.rex.model.implementations.REXObjectMax1CardinalityImpl;
 import eu.trowl.rex.model.implementations.REXObjectMaxCardinalityImpl;
 import eu.trowl.rex.model.implementations.REXObjectMinCardinalityImpl;
 import eu.trowl.rex.model.implementations.REXObjectPropertyExpressionImpl;
@@ -91,6 +43,7 @@ public class REXDataFactory {
 	REXClassExpressionBuilder cEBuilder = new REXClassExpressionBuilder(this);
 	REXDataRangeBuilder dRBuilder = new REXDataRangeBuilder(this);
 	REXPropertyExpressionBuilder pEBuilder = new REXPropertyExpressionBuilder(this);
+	public AbsorptionVisitor absorber = new ConceptAbsorption(this);
 
 	public HashMap<OWLClassExpression, REXClassImpl> concepts;
 	public HashMap<OWLDataRange, REXDatatypeImpl> datatypes;
@@ -115,6 +68,8 @@ public class REXDataFactory {
 	OWLDataFactory factory;
 
 	public boolean consistency = true;
+	
+	public HashSet<REXObjectUnionOfImpl> globalConstraints = new HashSet<REXObjectUnionOfImpl>();
 
 
 	public  REXClassExpressionImpl getREXClassExpression(OWLClassExpression clazz){
@@ -355,7 +310,7 @@ public class REXDataFactory {
 		return newName;
 	}
 
-	REXClassExpressionImpl getREXObjectComplementOf(
+	public REXClassExpressionImpl getREXObjectComplementOf(
 			REXClassExpressionImpl complement) {
 		// TODO Auto-generated method stub
 		if(complement instanceof REXObjectComplementOfImpl)
@@ -509,7 +464,7 @@ public class REXDataFactory {
 	}
 
 
-	private  REXClassExpressionImpl getREXObjectUnionOf(REXClassExpressionImpl ... concepts){
+	public  REXClassExpressionImpl getREXObjectUnionOf(REXClassExpressionImpl ... concepts){
 		//		if(concepts.length>2)
 		//			System.out.println("Incorrect number of union concepts!");
 		REXObjectUnionOfImpl newOr = concepts[0].Ors.get(concepts[1]);

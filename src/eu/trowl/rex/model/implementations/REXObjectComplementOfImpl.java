@@ -40,4 +40,10 @@ public class REXObjectComplementOfImpl extends REXClassExpressionImpl
 		// TODO Auto-generated method stub
 		return getClassExpression();
 	}
+
+	@Override
+	public boolean specifiedBy(REXClassImpl cls) {
+		// TODO Auto-generated method stub
+		return complement.specifiedBy(cls);
+	}
 }

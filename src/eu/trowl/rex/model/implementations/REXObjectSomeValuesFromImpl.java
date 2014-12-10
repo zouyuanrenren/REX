@@ -59,4 +59,10 @@ public class REXObjectSomeValuesFromImpl extends REXClassExpressionImpl
 			complement = prop.alls.get(fillerComp);
 		return complement;
 	}
+
+	@Override
+	public boolean specifiedBy(REXClassImpl cls) {
+		// TODO Auto-generated method stub
+		return filler.specifiedBy(cls);
+	}
 }

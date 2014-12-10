@@ -1,5 +1,6 @@
 package eu.trowl.rex.model.implementations;
 
+import eu.trowl.rex.absorption.AbsorptionVisitor;
 import eu.trowl.rex.model.interfaces.REXClassExpression;
 import eu.trowl.rex.model.interfaces.REXSubClassOf;
 
@@ -86,6 +87,10 @@ public class REXSubClassOfImpl implements REXSubClassOf {
 			else
 				System.out.println();
 		
+	}
+	
+	public void accept(AbsorptionVisitor visitor){
+		visitor.absorb(this);
 	}
 
 

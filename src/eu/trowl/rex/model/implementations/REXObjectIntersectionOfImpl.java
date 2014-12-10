@@ -65,4 +65,13 @@ public class REXObjectIntersectionOfImpl extends REXClassExpressionImpl
 		return complement;
 	}
 
+	@Override
+	public boolean specifiedBy(REXClassImpl cls) {
+		// TODO Auto-generated method stub
+		for(REXClassExpressionImpl conjunct:intersects)
+			if(conjunct.specifiedBy(cls))
+				return true;
+		return false;
+	}
+
 }

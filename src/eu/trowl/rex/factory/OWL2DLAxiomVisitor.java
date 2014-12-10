@@ -125,12 +125,30 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 //		initialiseREL2SubClassOf(lhs,rhs);
 
 	}
+	
+	private void initialiseREXClassAssertion(REXIndividualImpl indi, REXClassExpressionImpl cls) {
+		REXSubClassOfImpl newAxiom = factory.getREXSubClassOf(indi,cls);
+		newAxiom.initialise();
+		if(false)
+		if(indi.complement != null && indi.complement instanceof REXObjectIntersectionOfImpl)
+		{
+			REXObjectIntersectionOfImpl and = (REXObjectIntersectionOfImpl) indi.complement;
+			for(REXClassExpressionImpl conjunct:and.getEntities())
+				if(conjunct.complement != null)
+				{
+					factory.getREXSubClassOf(conjunct.complement, cls);
+					conjunct.complement.addOriginalSuperClasses(cls);
+				}
+		}
+
+	}
 
 	private void initialiseREXSubClassOf(REXClassExpressionImpl lhs,
 			REXClassExpressionImpl rhs) {
 		// TODO Auto-generated method stub
 		REXSubClassOfImpl newAxiom = factory.getREXSubClassOf(lhs,rhs);
 		newAxiom.initialise();
+		newAxiom.accept(factory.absorber);
 		if(false)
 		if(lhs.complement != null && lhs.complement instanceof REXObjectIntersectionOfImpl)
 		{
@@ -143,6 +161,27 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 				}
 		}
 
+	}
+	
+	private void initialiseREXEquivalentClasses(REXClassExpressionImpl lhs,
+			REXClassExpressionImpl rhs) {
+		// TODO Auto-generated method stub
+		REXSubClassOfImpl newAxiom = factory.getREXSubClassOf(lhs,rhs);
+		newAxiom.initialise();
+		newAxiom = factory.getREXSubClassOf(rhs, lhs);
+		newAxiom.initialise();
+		factory.absorber.absorbEQLHS(lhs, rhs);
+		if(false)
+		if(lhs.complement != null && lhs.complement instanceof REXObjectIntersectionOfImpl)
+		{
+			REXObjectIntersectionOfImpl and = (REXObjectIntersectionOfImpl) lhs.complement;
+			for(REXClassExpressionImpl conjunct:and.getEntities())
+				if(conjunct.complement != null)
+				{
+					factory.getREXSubClassOf(conjunct.complement, rhs);
+					conjunct.complement.addOriginalSuperClasses(rhs);
+				}
+		}
 	}
 
 	@Override
@@ -307,11 +346,11 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 	@Override
 	public void visit(OWLObjectPropertyAssertionAxiom ax) {
 		// TODO Auto-generated method stub
-		REXClassExpressionImpl sub = factory.getREXIndividual(ax.getSubject());
+		REXIndividualImpl sub = factory.getREXIndividual(ax.getSubject());
 		REXClassExpressionImpl obj = factory.getREXIndividual(ax.getObject());
 		REXObjectPropertyExpressionImpl role = factory.getREXObjectPropertyExpression(ax.getProperty());
 		REXClassExpressionImpl some = factory.getREXObjectSomeValuesFrom(role, obj);
-		initialiseREXSubClassOf(sub,some);
+		initialiseREXClassAssertion(sub,some);
 
 	}
 
@@ -384,9 +423,9 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 	@Override
 	public void visit(OWLClassAssertionAxiom ax) {
 		// TODO Auto-generated method stub
-		REXClassExpressionImpl indi = factory.getREXIndividual(ax.getIndividual());
+		REXIndividualImpl indi = factory.getREXIndividual(ax.getIndividual());
 		REXClassExpressionImpl clazz = factory.getREXClassExpression(ax.getClassExpression());
-		initialiseREXSubClassOf(indi,clazz);
+		initialiseREXClassAssertion(indi,clazz);
 
 	}
 
@@ -396,28 +435,31 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 		List<REXClassExpressionImpl> clss = new ArrayList<REXClassExpressionImpl>();
 		for(OWLClassExpression c:ax.getClassExpressions())
 		{
-			clss.add(factory.getREXClassExpression(c));
-		}
-		for(REXClassExpressionImpl lhs:clss)
-		{
+			REXClassExpressionImpl lhs = factory.getREXClassExpression(c);
 			for(REXClassExpressionImpl rhs:clss)
-				if(lhs!=rhs)
-				{
-					initialiseREXSubClassOf(lhs, rhs);
-				}
-			lhs.LHS();
+				initialiseREXEquivalentClasses(lhs, rhs);
+			clss.add(lhs);
 		}
+//		for(REXClassExpressionImpl lhs:clss)
+//		{
+//			for(REXClassExpressionImpl rhs:clss)
+//				if(lhs!=rhs)
+//				{
+//					initialiseREXSubClassOf(lhs, rhs);
+//				}
+//			lhs.LHS();
+//		}
 
 	}
 
 	@Override
 	public void visit(OWLDataPropertyAssertionAxiom ax) {
 		// TODO Auto-generated method stub
-		REXClassExpressionImpl sub = factory.getREXIndividual(ax.getSubject());
+		REXIndividualImpl sub = factory.getREXIndividual(ax.getSubject());
 		REXClassExpressionImpl obj = factory.getREXLiteral(ax.getObject());
 		REXObjectPropertyExpressionImpl role = factory.getREXDataPropertyExpression(ax.getProperty());
 		REXClassExpressionImpl some = factory.getREXObjectSomeValuesFrom(role, obj);
-		initialiseREXSubClassOf(sub,some);
+		initialiseREXClassAssertion(sub,some);
 
 	}
 
@@ -462,17 +504,22 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 		List<REXIndividualImpl> indis = new ArrayList<REXIndividualImpl>();
 		for(OWLIndividual i:ax.getIndividuals())
 		{
+			REXIndividualImpl lhs = factory.getREXIndividual(i);
+			for(REXIndividualImpl rhs:indis)
+			{
+				initialiseREXClassAssertion(lhs, rhs);
+			}
 			indis.add(factory.getREXIndividual(i));
 		}
-		for(REXClassExpressionImpl lhs:indis)
-		{
-			for(REXClassExpressionImpl rhs:indis)
-				if(lhs!=rhs)
-				{
-					initialiseREXSubClassOf(lhs, rhs);
-				}
-			lhs.LHS();
-		}
+//		for(REXClassExpressionImpl lhs:indis)
+//		{
+//			for(REXClassExpressionImpl rhs:indis)
+//				if(lhs!=rhs)
+//				{
+//					initialiseREXSubClassOf(lhs, rhs);
+//				}
+//			lhs.LHS();
+//		}
 
 	}
 

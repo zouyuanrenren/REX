@@ -137,6 +137,8 @@ abstract public class REXClassExpressionImpl implements REXClassExpression {
 	public Map<REXObjectMinCardinalityImpl, Integer> totalWeight = new HashMap<REXObjectMinCardinalityImpl, Integer>();
 
 	public abstract REXClassExpressionImpl testComplement();
+
+	public abstract boolean specifiedBy(REXClassImpl cls);
 	
 	
 	

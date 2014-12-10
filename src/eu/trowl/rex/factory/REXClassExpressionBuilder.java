@@ -81,6 +81,7 @@ public class REXClassExpressionBuilder implements
 		REXClassExpressionImpl complement = factory.getREXClassExpression(clazz.getOperand());
 		// do I need to do this?
 		// a very simple normalisation step;
+		complement.testComplement();
 		return factory.getREXObjectComplementOf(complement);
 	}
 

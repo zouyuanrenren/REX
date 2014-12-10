@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 
 import eu.trowl.rex.model.interfaces.REXClass;
+import eu.trowl.rex.util.REXReasonerConfiguration.Absorbable;
 
 public class REXClassImpl extends REXClassExpressionImpl implements REXClass {
 
@@ -14,6 +15,12 @@ public class REXClassImpl extends REXClassExpressionImpl implements REXClass {
 	public boolean original = true;
 	
 	public Set<REXClassImpl> equivalence = new HashSet<REXClassImpl>();
+	
+//	public Absorbable absorbable = Absorbable.Unknown;
+	
+	public Set<REXClassExpressionImpl> unfoldableSuperClasses = new HashSet<REXClassExpressionImpl>();
+	public Set<REXClassExpressionImpl> unfoldableDefinition = new HashSet<REXClassExpressionImpl>();
+
 	
 	public REXClassImpl(OWLClass clazz) {
 		// TODO Auto-generated constructor stub
@@ -57,6 +64,33 @@ public class REXClassImpl extends REXClassExpressionImpl implements REXClass {
 	public REXClassExpressionImpl testComplement() {
 		// TODO Auto-generated method stub
 		return complement;
+	}
+	
+	public boolean canBeAbsorbed(REXClassExpressionImpl... exps) {
+		for(REXClassExpressionImpl eq:unfoldableDefinition)
+			if(!(eq instanceof REXClassImpl))
+				return false;
+		for(REXClassExpressionImpl exp:exps)
+			if(exp.specifiedBy(this))
+				return false;
+		return true;
+		
+	}
+
+	@Override
+	public boolean specifiedBy(REXClassImpl cls) {
+		// TODO Auto-generated method stub
+//		if(this.toString() == "Full")
+//			System.out.println(this);
+		if(this == cls)
+			return true;
+		for(REXClassExpressionImpl sup:unfoldableSuperClasses)
+			if(sup.specifiedBy(cls))
+				return true;
+		for(REXClassExpressionImpl eq:unfoldableDefinition)
+			if(!(eq instanceof REXClassImpl))
+				return eq.specifiedBy(cls);
+		return false;
 	}
 
 }
