@@ -118,13 +118,13 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 		}
 	}
 
-	private void addToUnfoldableTBox(REXClassImpl lhs,
+	protected void addToUnfoldableTBox(REXClassImpl lhs,
 			REXClassExpressionImpl rhs) {
 		// TODO Auto-generated method stub
 		lhs.unfoldableSuperClasses.add(rhs);
 	}
 
-	private void addToGeneralTBox(REXClassExpressionImpl lhsComp,
+	protected void addToGeneralTBox(REXClassExpressionImpl lhsComp,
 			REXClassExpressionImpl rhs) {
 		// TODO Auto-generated method stub
 		factory.globalConstraints.add((REXObjectUnionOfImpl) factory.getREXObjectUnionOf(lhsComp,rhs));
@@ -132,19 +132,23 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 	}
 
 	@Override
-	public boolean absorbEQLHS(REXClassExpressionImpl lhs, REXClassExpressionImpl rhs) {
+	public void absorbEQLHS(REXClassExpressionImpl lhs, REXClassExpressionImpl rhs) {
 		// TODO Auto-generated method stub
 		if(lhs instanceof REXClassImpl && lhs.asREXClassImpl().unfoldableSuperClasses.size() == 0 && lhs.asREXClassImpl().canBeAbsorbed(rhs))
 		{
 			lhs.asREXClassImpl().unfoldableDefinition.add(rhs);
-			return true;
+//			return true;
 		}
 		else if(lhs instanceof REXObjectComplementOfImpl && lhs.complement instanceof REXClassImpl && lhs.complement.asREXClassImpl().unfoldableSuperClasses.size() == 0 && lhs.complement.asREXClassImpl().canBeAbsorbed(factory.getREXObjectComplementOf(rhs)))
 		{
 			lhs.complement.asREXClassImpl().unfoldableDefinition.add(factory.getREXObjectComplementOf(rhs));
-			return true;
+//			return true;
 		}
-		return absorbEQRHS(lhs, rhs);
+		if (absorbEQRHS(lhs, rhs) == false)
+		{
+			absorbLHS(lhs, rhs);
+			absorbLHS(rhs, lhs);
+		}
 	}
 
 	@Override
@@ -161,8 +165,8 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 			rhs.complement.asREXClassImpl().unfoldableDefinition.add(factory.getREXObjectComplementOf(lhs));
 			return true;
 		}
-		addToGeneralTBox(factory.getREXObjectComplementOf(lhs),rhs);
-		addToGeneralTBox(factory.getREXObjectComplementOf(rhs),lhs);
+//		addToGeneralTBox(factory.getREXObjectComplementOf(lhs),rhs);
+//		addToGeneralTBox(factory.getREXObjectComplementOf(rhs),lhs);
 		return false;
 	}
 

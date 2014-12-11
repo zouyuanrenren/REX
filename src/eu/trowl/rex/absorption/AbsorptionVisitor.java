@@ -18,7 +18,7 @@ public abstract class AbsorptionVisitor {
 
 	public abstract boolean absorbRHS(REXClassExpressionImpl lhs, REXClassExpressionImpl rhs);
 
-	public abstract boolean absorbEQLHS(REXClassExpressionImpl lhs, REXClassExpressionImpl rhs);
+	public abstract void absorbEQLHS(REXClassExpressionImpl lhs, REXClassExpressionImpl rhs);
 
 	public abstract boolean absorbEQRHS(REXClassExpressionImpl lhs, REXClassExpressionImpl rhs);
 }

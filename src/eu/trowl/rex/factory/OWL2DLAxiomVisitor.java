@@ -57,6 +57,7 @@ import eu.trowl.rex.model.implementations.REXIndividualImpl;
 import eu.trowl.rex.model.implementations.REXObjectIntersectionOfImpl;
 import eu.trowl.rex.model.implementations.REXObjectPropertyExpressionImpl;
 import eu.trowl.rex.model.implementations.REXObjectSomeValuesFromImpl;
+import eu.trowl.rex.model.implementations.REXObjectUnionOfImpl;
 import eu.trowl.rex.model.implementations.REXSubClassOfImpl;
 import eu.trowl.rex.model.interfaces.REXObjectSomeValuesFrom;
 
@@ -146,6 +147,11 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 	private void initialiseREXSubClassOf(REXClassExpressionImpl lhs,
 			REXClassExpressionImpl rhs) {
 		// TODO Auto-generated method stub
+		if(lhs instanceof REXObjectUnionOfImpl)
+		{
+			normaliseLHSUnion((REXObjectUnionOfImpl) lhs, rhs);
+		}
+		else{
 		REXSubClassOfImpl newAxiom = factory.getREXSubClassOf(lhs,rhs);
 		newAxiom.initialise();
 		newAxiom.accept(factory.absorber);
@@ -160,12 +166,33 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 					conjunct.complement.addOriginalSuperClasses(rhs);
 				}
 		}
+		}
 
 	}
 	
+	private void normaliseLHSUnion(REXObjectUnionOfImpl lhs,
+			REXClassExpressionImpl rhs) {
+		// TODO Auto-generated method stub
+		for(REXClassExpressionImpl disjunct:lhs.getEntities())
+			if(disjunct instanceof REXIndividualImpl)
+				initialiseREXClassAssertion((REXIndividualImpl) disjunct, rhs);
+			else
+				initialiseREXSubClassOf(disjunct, rhs);
+	}
+
 	private void initialiseREXEquivalentClasses(REXClassExpressionImpl lhs,
 			REXClassExpressionImpl rhs) {
 		// TODO Auto-generated method stub
+		if(lhs instanceof REXObjectUnionOfImpl)
+		{
+			normaliseLHSUnion((REXObjectUnionOfImpl) lhs, rhs);
+			if(rhs instanceof REXObjectUnionOfImpl)
+				normaliseLHSUnion((REXObjectUnionOfImpl) rhs, lhs);
+			else
+				initialiseREXSubClassOf(rhs, lhs);
+		}
+		else
+		{
 		REXSubClassOfImpl newAxiom = factory.getREXSubClassOf(lhs,rhs);
 		newAxiom.initialise();
 		newAxiom = factory.getREXSubClassOf(rhs, lhs);
@@ -181,6 +208,7 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 					factory.getREXSubClassOf(conjunct.complement, rhs);
 					conjunct.complement.addOriginalSuperClasses(rhs);
 				}
+		}
 		}
 	}
 
