@@ -1,5 +1,7 @@
 package eu.trowl.rex.owlapi;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.IllegalConfigurationException;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -21,9 +23,34 @@ public class REXReasonerFactory implements OWLReasonerFactory{
 	@Override
 	public REXReasoner createReasoner(OWLOntology ontology) {
 		// TODO Auto-generated method stub
-		REXReasoner reasoner = new REXReasoner(ontology.getOWLOntologyManager(), ontology, bgp, MetaOn,disjoint);
-		reasoner.manager.addOntologyChangeListener(reasoner, new REXChangeBroadcastStrategy());
-		return reasoner;
+		REXReasoner reasoner;
+		try {
+			reasoner = new REXReasoner(ontology.getOWLOntologyManager(), ontology, bgp, MetaOn,disjoint);
+			reasoner.manager.addOntologyChangeListener(reasoner, new REXChangeBroadcastStrategy());
+			return reasoner;
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@Override

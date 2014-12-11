@@ -3,6 +3,7 @@ package eu.trowl.rex.tableau.alci.test;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -18,7 +19,7 @@ import eu.trowl.rex.tableau.alci.ALCIReasoner;
 
 public class AssessmentTest {
 	
-	public static void main(String[] args) throws IOException, OWLOntologyCreationException, CloneNotSupportedException {
+	public static void main(String[] args) throws IOException, OWLOntologyCreationException, CloneNotSupportedException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 		File file = new File("ontology/eu.trowl.rex.tableau.test/bookstoreTest3.owl");

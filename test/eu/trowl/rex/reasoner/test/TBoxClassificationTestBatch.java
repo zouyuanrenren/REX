@@ -1,5 +1,6 @@
 package eu.trowl.rex.reasoner.test;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -18,8 +19,15 @@ public class TBoxClassificationTestBatch {
 	 * @param args
 	 * @throws OWLOntologyCreationException 
 	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 * @throws ClassNotFoundException 
 	 */
-	public static void main(String[] args) throws OWLOntologyCreationException, InterruptedException {
+	public static void main(String[] args) throws OWLOntologyCreationException, InterruptedException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		// TODO Auto-generated method stub
 		String path = "C:/Users/zouyuanrenren/Eclipseworkspace/Benchmarks/AIJEvaluation/";
 

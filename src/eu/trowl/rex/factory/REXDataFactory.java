@@ -1,5 +1,7 @@
 package eu.trowl.rex.factory;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,11 +20,13 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 import eu.trowl.rex.absorption.AbsorptionVisitor;
 import eu.trowl.rex.absorption.ConceptAbsorption;
+import eu.trowl.rex.absorption.RoleAbsorption;
 import eu.trowl.rex.model.implementations.REXClassExpressionImpl;
 import eu.trowl.rex.model.implementations.REXClassImpl;
 import eu.trowl.rex.model.implementations.REXDataPropertyImpl;
 import eu.trowl.rex.model.implementations.REXDatatypeImpl;
 import eu.trowl.rex.model.implementations.REXIndividualImpl;
+import eu.trowl.rex.model.implementations.REXInverseObjectPropertyImpl;
 import eu.trowl.rex.model.implementations.REXLiteralImpl;
 import eu.trowl.rex.model.implementations.REXObjectAllValuesFromImpl;
 import eu.trowl.rex.model.implementations.REXObjectComplementOfImpl;
@@ -34,6 +38,7 @@ import eu.trowl.rex.model.implementations.REXObjectPropertyImpl;
 import eu.trowl.rex.model.implementations.REXObjectSomeValuesFromImpl;
 import eu.trowl.rex.model.implementations.REXObjectUnionOfImpl;
 import eu.trowl.rex.model.implementations.REXSubClassOfImpl;
+import eu.trowl.rex.util.REXReasonerConfiguration;
 
 public class REXDataFactory {
 	//	 public List<REL2ClassExpressionImpl> classExpressions = new ArrayList<REL2ClassExpressionImpl>();
@@ -43,7 +48,7 @@ public class REXDataFactory {
 	REXClassExpressionBuilder cEBuilder = new REXClassExpressionBuilder(this);
 	REXDataRangeBuilder dRBuilder = new REXDataRangeBuilder(this);
 	REXPropertyExpressionBuilder pEBuilder = new REXPropertyExpressionBuilder(this);
-	public AbsorptionVisitor absorber = new ConceptAbsorption(this);
+	public AbsorptionVisitor absorber;
 
 	public HashMap<OWLClassExpression, REXClassImpl> concepts;
 	public HashMap<OWLDataRange, REXDatatypeImpl> datatypes;
@@ -71,6 +76,12 @@ public class REXDataFactory {
 	
 	public HashSet<REXObjectUnionOfImpl> globalConstraints = new HashSet<REXObjectUnionOfImpl>();
 
+	public REXDataFactory() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		Class cl = Class.forName(REXReasonerConfiguration.absorption);
+		Constructor con = cl.getConstructor(REXDataFactory.class);
+		absorber = (AbsorptionVisitor) con.newInstance(this);
+
+	}
 
 	public  REXClassExpressionImpl getREXClassExpression(OWLClassExpression clazz){
 		REXClassExpressionImpl cls = clazz.getNNF().accept(cEBuilder);
@@ -363,7 +374,7 @@ public class REXDataFactory {
 		return newMin;
 	}
 
-	REXObjectSomeValuesFromImpl getREXObjectSomeValuesFrom(REXObjectPropertyExpressionImpl role, REXClassExpressionImpl filler){
+	public REXObjectSomeValuesFromImpl getREXObjectSomeValuesFrom(REXObjectPropertyExpressionImpl role, REXClassExpressionImpl filler){
 
 		REXObjectSomeValuesFromImpl newSome = role.somes.get(filler);
 		if(newSome == null)
@@ -426,7 +437,7 @@ public class REXDataFactory {
 //	}
 
 
-	REXObjectAllValuesFromImpl getREXObjectAllValuesFrom(
+	public REXObjectAllValuesFromImpl getREXObjectAllValuesFrom(
 			REXObjectPropertyExpressionImpl role, REXClassExpressionImpl filler) {
 		// TODO Auto-generated method stub
 		REXObjectAllValuesFromImpl newAll = role.alls.get(filler);
@@ -525,6 +536,16 @@ public class REXDataFactory {
 		C.subMax1Axioms.putIfAbsent(D, new REXSubClassOfImpl(C,D));
 		D.RHS();
 		return C.subMax1Axioms.get(D);
+	}
+
+
+	public REXObjectPropertyExpressionImpl getREXInverseObjectProperty(
+			REXObjectPropertyExpressionImpl role) {
+		// TODO Auto-generated method stub
+		REXObjectPropertyExpressionImpl inverse = role.getInversePropertyExpression();
+		if(inverse == null)
+			inverse = new REXInverseObjectPropertyImpl((REXObjectPropertyImpl) role);
+		return inverse;
 	}
 
 

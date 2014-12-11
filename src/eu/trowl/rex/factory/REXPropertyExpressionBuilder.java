@@ -38,11 +38,7 @@ public class REXPropertyExpressionBuilder implements
 		// TODO Auto-generated method stub
 		OWLObjectInverseOf newrole = (OWLObjectInverseOf) prop;
 		REXObjectPropertyImpl inverse = (REXObjectPropertyImpl) newrole.getInverse().asOWLObjectProperty().accept(this); 
-		REXObjectPropertyExpressionImpl role = inverse.getInversePropertyExpression();
-		if(role == null)
-			role = new REXInverseObjectPropertyImpl(inverse);
-		factory.roles.put(prop, role);
-		return role;
+		return factory.getREXInverseObjectProperty(inverse);
 	}
 
 	@Override

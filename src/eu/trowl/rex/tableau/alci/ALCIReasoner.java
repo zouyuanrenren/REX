@@ -1,5 +1,6 @@
 package eu.trowl.rex.tableau.alci;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -30,13 +31,13 @@ public class ALCIReasoner {
         this.importClosure = ontology.getImportsClosure();
 	}
 	
-	public boolean isConsistent() throws CloneNotSupportedException {
+	public boolean isConsistent() throws CloneNotSupportedException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		// TODO Auto-generated method stub
 		Tableau tableau = new Tableau(importClosure, factory);
 		return tableau.check();
 	}
 
-	public boolean isSatisfiable(OWLClassExpression arg0) throws CloneNotSupportedException {
+	public boolean isSatisfiable(OWLClassExpression arg0) throws CloneNotSupportedException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		// TODO Auto-generated method stub
 		
 		Tableau tableau = new Tableau(importClosure, factory);
@@ -46,14 +47,14 @@ public class ALCIReasoner {
 		return tableau.check();
 	}
 	
-	public boolean isEntailed(OWLSubClassOfAxiom axiom) throws CloneNotSupportedException
+	public boolean isEntailed(OWLSubClassOfAxiom axiom) throws CloneNotSupportedException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
 	{
 		Tableau tableau = new Tableau(importClosure, factory);
 		tableau.add(factory.getOWLAnonymousIndividual(), factory.getOWLObjectIntersectionOf(axiom.getSubClass(),axiom.getSuperClass().getComplementNNF()));
 		return !tableau.check();
 	}
 	
-	public boolean isEntailed(OWLClassAssertionAxiom axiom) throws CloneNotSupportedException
+	public boolean isEntailed(OWLClassAssertionAxiom axiom) throws CloneNotSupportedException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
 	{
 		Tableau tableau = new Tableau(importClosure, factory);
 		tableau.add(axiom.getIndividual(), axiom.getClassExpression().getComplementNNF());
@@ -62,7 +63,7 @@ public class ALCIReasoner {
 	}
 
 	public boolean hasRelation(OWLNamedIndividual subject,
-			OWLObjectPropertyExpression property, OWLNamedIndividual object) throws CloneNotSupportedException {
+			OWLObjectPropertyExpression property, OWLNamedIndividual object) throws CloneNotSupportedException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		// TODO Auto-generated method stub
 		Tableau tableau = new Tableau(importClosure, factory);
 		tableau.check();

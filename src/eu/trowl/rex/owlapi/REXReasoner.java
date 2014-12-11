@@ -1,5 +1,6 @@
 package eu.trowl.rex.owlapi;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,8 +106,9 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 	Set<InferenceType> supported_TBox_Precompute = new HashSet<InferenceType>();
 
 	// ROIQ
-	public REXReasoner(OWLOntologyManager manager, OWLOntology ontology, boolean bgp, boolean MetaOn, boolean disjoint) {
+	public REXReasoner(OWLOntologyManager manager, OWLOntology ontology, boolean bgp, boolean MetaOn, boolean disjoint) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super();
+		reasoner = new Reasoner();
 //		timer.start();
 		this.manager = manager;
 		this.factory = manager.getOWLDataFactory();
@@ -1884,7 +1886,7 @@ public class REXReasoner implements OWLReasoner, OWLOntologyChangeListener{
 //			return true;
 	}
 	
-	Reasoner reasoner = new Reasoner();
+	Reasoner reasoner;
 	
 	public void loadOntology()
 	{

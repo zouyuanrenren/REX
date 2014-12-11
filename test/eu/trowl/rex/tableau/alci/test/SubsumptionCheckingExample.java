@@ -2,6 +2,7 @@ package eu.trowl.rex.tableau.alci.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -16,7 +17,7 @@ import eu.trowl.rex.tableau.alci.ALCIReasoner;
 
 public class SubsumptionCheckingExample {
 	
-	public static void main(String[] args) throws IOException, OWLOntologyCreationException, CloneNotSupportedException {
+	public static void main(String[] args) throws IOException, OWLOntologyCreationException, CloneNotSupportedException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 		File file = new File("ontology/eu.trowl.rex.tableau.test/SubsumptionCheckingExample.owl");

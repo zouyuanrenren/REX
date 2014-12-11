@@ -7,7 +7,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 
 import eu.trowl.rex.model.interfaces.REXClass;
-import eu.trowl.rex.util.REXReasonerConfiguration.Absorbable;
 
 public class REXClassImpl extends REXClassExpressionImpl implements REXClass {
 

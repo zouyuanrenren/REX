@@ -1,4 +1,5 @@
 package eu.trowl.rex.reasoner;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ public class Reasoner {
 	
 	int cNum = 0;
 	
-	public REXOntologyBuilder builder = new REXOntologyBuilder();
+	public REXOntologyBuilder builder;
 
 	HashSet<ClassificationWorker> workers = new HashSet<ClassificationWorker>(6);
 
@@ -45,15 +46,17 @@ public class Reasoner {
 
 	Collection<REXObjectPropertyExpressionImpl> roles;
 
-	public Reasoner(int threadNum)
+	public Reasoner(int threadNum) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
 	{
+		builder = new REXOntologyBuilder();
 		this.threadNum = threadNum;
 		threads = new Thread[threadNum];
 		WIPNum = threadNum;
 	}
 	
-	public Reasoner()
+	public Reasoner() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
 	{
+		builder = new REXOntologyBuilder();
 		this.threadNum = 0;
 		WIPNum = 0;
 	}

@@ -1,5 +1,6 @@
 package eu.trowl.rex.factory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -10,9 +11,13 @@ import eu.trowl.rex.model.implementations.REXObjectPropertyExpressionImpl;
 import eu.trowl.rex.util.REXReasonerConfiguration;
 
 public class REXOntologyBuilder {
-	REXDataFactory rex_factory = new REXDataFactory();
+	REXDataFactory rex_factory;
 	public ArrayList<REXObjectPropertyExpressionImpl> roles;
 	public int cNum;
+	
+	public REXOntologyBuilder() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		rex_factory = new REXDataFactory();
+	}
 
 	public void buildOntology(OWLOntology onto) {
 		// TODO Auto-generated method stub

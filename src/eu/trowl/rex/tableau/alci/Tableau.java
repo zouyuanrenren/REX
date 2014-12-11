@@ -1,5 +1,6 @@
 package eu.trowl.rex.tableau.alci;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ import eu.trowl.rex.model.interfaces.REXObjectSomeValuesFrom;
 public class Tableau {
 //	Set<OWLOntology> ontologies;
 	OWLDataFactory factory;
-	REXDataFactory rFactory = new REXDataFactory();
+	REXDataFactory rFactory;
 	ArrayList<REXIndividualImpl> nodes = new ArrayList<REXIndividualImpl>();
 //	HashSet<REXIndividualImpl> blocked = new HashSet<REXIndividualImpl>();
 	
@@ -46,13 +47,14 @@ public class Tableau {
 //	HashMap<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>> edges = new HashMap<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>>();
 	HashSet<REXClassExpressionImpl> globalConstraints = new HashSet<REXClassExpressionImpl>();
 	
-	public Tableau()
+	public Tableau() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
 	{
-		
+		rFactory = new REXDataFactory();
 	}
 	
-	public Tableau(Set<OWLOntology> ontologies, OWLDataFactory factory)
+	public Tableau(Set<OWLOntology> ontologies, OWLDataFactory factory) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
 	{
+		rFactory = new REXDataFactory();
 //		this.ontologies = ontologies;
 		this.factory = factory;
 		rFactory.initialise(factory);
@@ -539,59 +541,83 @@ public class Tableau {
 	@Override
 	protected Tableau clone() throws CloneNotSupportedException {
 		// TODO Auto-generated method stub
-		Tableau clone = new Tableau();
-//		clone.ontologies = this.ontologies;
-		clone.factory = this.factory;
-		clone.nodes = new ArrayList<REXIndividualImpl>();
-		HashMap<REXIndividualImpl, REXIndividualImpl> map = new HashMap<REXIndividualImpl, REXIndividualImpl>();
-		for(REXIndividualImpl node:nodes)
-		{
-			REXIndividualImpl newnode = new REXIndividualImpl(node.getIRI());
-			clone.nodes.add(newnode);
-			map.put(node, newnode);
-		}
-		for(REXIndividualImpl node:nodes)
-		{
-			REXIndividualImpl newnode = map.get(node);
-			for(REXClassExpressionImpl cls:node.superClasses)
+		Tableau clone = null;
+		try {
+			clone = new Tableau();
+//			clone.ontologies = this.ontologies;
+			clone.factory = this.factory;
+			clone.nodes = new ArrayList<REXIndividualImpl>();
+			HashMap<REXIndividualImpl, REXIndividualImpl> map = new HashMap<REXIndividualImpl, REXIndividualImpl>();
+			for(REXIndividualImpl node:nodes)
 			{
-				if(cls instanceof REXIndividualImpl)
-					newnode.superClasses.add(map.get(cls));
-				else
-					newnode.superClasses.add(cls);
+				REXIndividualImpl newnode = new REXIndividualImpl(node.getIRI());
+				clone.nodes.add(newnode);
+				map.put(node, newnode);
 			}
-			for(REXObjectPropertyExpressionImpl role:node.implications.keySet())
+			for(REXIndividualImpl node:nodes)
 			{
-				Set<REXClassExpressionImpl> objs = newnode.implications.get(role);
-				if(objs == null)
+				REXIndividualImpl newnode = map.get(node);
+				for(REXClassExpressionImpl cls:node.superClasses)
 				{
-					objs = new HashSet<REXClassExpressionImpl>();
-					newnode.implications.put(role, objs);
-				}
-				for(REXClassExpressionImpl obj:node.implications.get(role))
-					if(obj instanceof REXIndividualImpl)
-						objs.add(map.get(obj));
+					if(cls instanceof REXIndividualImpl)
+						newnode.superClasses.add(map.get(cls));
 					else
-						objs.add(obj);
+						newnode.superClasses.add(cls);
+				}
+				for(REXObjectPropertyExpressionImpl role:node.implications.keySet())
+				{
+					Set<REXClassExpressionImpl> objs = newnode.implications.get(role);
+					if(objs == null)
+					{
+						objs = new HashSet<REXClassExpressionImpl>();
+						newnode.implications.put(role, objs);
+					}
+					for(REXClassExpressionImpl obj:node.implications.get(role))
+						if(obj instanceof REXIndividualImpl)
+							objs.add(map.get(obj));
+						else
+							objs.add(obj);
+				}
 			}
-		}
-//		clone.blocked = new HashSet<OWLIndividual>(this.blocked);
-//		clone.nodeLabels = new HashMap<OWLIndividual, HashSet<OWLClassExpression>>();
-//		for(Entry<OWLIndividual, HashSet<OWLClassExpression>> entry:this.nodeLabels.entrySet())
-//		{
-//			HashSet<OWLClassExpression> labels = new HashSet<OWLClassExpression>(entry.getValue());
-//			clone.nodeLabels.put(entry.getKey(), labels);
-//		}
-//		for(Entry<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>> entry:this.edges.entrySet())
-//		{
-//			HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relations = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
-//			clone.edges.put(entry.getKey(), relations);
-//			for(Entry<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relationEntry:entry.getValue().entrySet())
+//			clone.blocked = new HashSet<OWLIndividual>(this.blocked);
+//			clone.nodeLabels = new HashMap<OWLIndividual, HashSet<OWLClassExpression>>();
+//			for(Entry<OWLIndividual, HashSet<OWLClassExpression>> entry:this.nodeLabels.entrySet())
 //			{
-//				HashSet<OWLIndividual> objects = new HashSet<OWLIndividual>(relationEntry.getValue());
-//				relations.put(relationEntry.getKey(), objects);
+//				HashSet<OWLClassExpression> labels = new HashSet<OWLClassExpression>(entry.getValue());
+//				clone.nodeLabels.put(entry.getKey(), labels);
 //			}
-//		}
+//			for(Entry<OWLIndividual, HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>> entry:this.edges.entrySet())
+//			{
+//				HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relations = new HashMap<OWLObjectPropertyExpression, HashSet<OWLIndividual>>();
+//				clone.edges.put(entry.getKey(), relations);
+//				for(Entry<OWLObjectPropertyExpression, HashSet<OWLIndividual>> relationEntry:entry.getValue().entrySet())
+//				{
+//					HashSet<OWLIndividual> objects = new HashSet<OWLIndividual>(relationEntry.getValue());
+//					relations.put(relationEntry.getKey(), objects);
+//				}
+//			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return clone;
 	}
 

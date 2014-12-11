@@ -7,7 +7,6 @@ import eu.trowl.rex.model.implementations.REXObjectComplementOfImpl;
 import eu.trowl.rex.model.implementations.REXObjectIntersectionOfImpl;
 import eu.trowl.rex.model.implementations.REXObjectUnionOfImpl;
 import eu.trowl.rex.model.implementations.REXSubClassOfImpl;
-import eu.trowl.rex.util.REXReasonerConfiguration.Absorbable;
 
 public class ConceptAbsorption extends AbsorptionVisitor {
 

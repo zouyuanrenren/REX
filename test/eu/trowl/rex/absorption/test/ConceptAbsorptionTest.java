@@ -1,6 +1,7 @@
 package eu.trowl.rex.absorption.test;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -14,7 +15,7 @@ import eu.trowl.rex.model.implementations.REXClassImpl;
 
 public class ConceptAbsorptionTest {
 
-	public static void main(String[] args) throws OWLOntologyCreationException {
+	public static void main(String[] args) throws OWLOntologyCreationException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		// TODO Auto-generated method stub
 
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
