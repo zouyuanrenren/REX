@@ -4,6 +4,7 @@ import eu.trowl.rex.factory.REXDataFactory;
 import eu.trowl.rex.model.implementations.REXClassExpressionImpl;
 import eu.trowl.rex.model.implementations.REXObjectAllValuesFromImpl;
 import eu.trowl.rex.model.implementations.REXObjectSomeValuesFromImpl;
+import eu.trowl.rex.model.implementations.REXObjectUnionOfImpl;
 
 public class RoleAbsorption extends ConceptAbsorption {
 
@@ -26,11 +27,26 @@ public class RoleAbsorption extends ConceptAbsorption {
 	@Override
 	public boolean absorbRHS(REXClassExpressionImpl lhscomp, REXClassExpressionImpl rhs) {
 		if(rhs instanceof REXObjectAllValuesFromImpl)
-		{
+		{			
 			REXObjectAllValuesFromImpl all = (REXObjectAllValuesFromImpl) rhs;
 			return absorbRHS(factory.getREXObjectAllValuesFrom(factory.getREXInverseObjectProperty(all.getProperty()), lhscomp), all.getFiller());
 		}
 		else
 			return super.absorbRHS(lhscomp, rhs);
 	}
+
+	@Override
+	protected void addToGeneralTBox(REXClassExpressionImpl lhsComp,
+			REXClassExpressionImpl rhs) {
+		// TODO Auto-generated method stub
+		if(lhsComp instanceof REXObjectAllValuesFromImpl)
+		{
+			REXObjectAllValuesFromImpl all = (REXObjectAllValuesFromImpl) lhsComp;
+			addToUnfoldableTBox(factory.top, factory.getREXObjectAllValuesFrom(factory.getREXInverseObjectProperty(all.getProperty()), rhs));
+		}
+		else
+		factory.globalConstraints.add((REXObjectUnionOfImpl) factory.getREXObjectUnionOf(lhsComp,rhs));
+
+	}
+
 }

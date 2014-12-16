@@ -30,7 +30,7 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 		if(lhs instanceof REXClassImpl)
 		{
 //			need to examine if the lhs is absorbable
-			if(!lhs.asREXClassImpl().canBeAbsorbed(rhs))
+			if(lhs.asREXClassImpl().isDefined())
 			{
 				// unabsorbable class has to be internalised
 //				addToGeneralTBox(lhs, rhs);
@@ -52,7 +52,7 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 			REXClassExpressionImpl tail = inter.getEntities().get(1);
 			if(head instanceof REXClassImpl)
 			{
-				if(!head.asREXClassImpl().canBeAbsorbed(tail,rhs))
+				if(head.asREXClassImpl().isDefined())
 					return absorbLHS(tail, factory.getREXObjectUnionOf(factory.getREXObjectComplementOf(head), rhs));
 				else
 					// can be absorbed
@@ -79,7 +79,7 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 		if(rhs instanceof REXObjectComplementOfImpl)
 		{
 			REXObjectComplementOfImpl comp = (REXObjectComplementOfImpl) rhs;
-			if(comp.complement instanceof REXClassImpl && comp.complement.asREXClassImpl().canBeAbsorbed(lhsComp))
+			if(comp.complement instanceof REXClassImpl && !comp.complement.asREXClassImpl().isDefined())
 				{
 					REXSubClassOfImpl axiom = factory.getREXSubClassOf(comp.complement, lhsComp);
 					axiom.initialise();
@@ -97,7 +97,7 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 			REXObjectUnionOfImpl union = (REXObjectUnionOfImpl) rhs;
 			REXClassExpressionImpl head = union.getEntities().get(0);
 			REXClassExpressionImpl tail = union.getEntities().get(1);
-			if(head instanceof REXObjectComplementOfImpl && head.complement instanceof REXClassImpl && head.complement.asREXClassImpl().canBeAbsorbed(lhsComp, tail))
+			if(head instanceof REXObjectComplementOfImpl && head.complement instanceof REXClassImpl && !head.complement.asREXClassImpl().isDefined())
 					{
 						REXClassExpressionImpl newUnion = factory.getREXObjectUnionOf(lhsComp, tail);
 						REXSubClassOfImpl axiom = factory.getREXSubClassOf(head.complement, newUnion);
@@ -133,12 +133,12 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 	@Override
 	public void absorbEQLHS(REXClassExpressionImpl lhs, REXClassExpressionImpl rhs) {
 		// TODO Auto-generated method stub
-		if(lhs instanceof REXClassImpl && lhs.asREXClassImpl().unfoldableSuperClasses.size() == 0 && lhs.asREXClassImpl().canBeAbsorbed(rhs))
+		if(lhs instanceof REXClassImpl && lhs.asREXClassImpl().unfoldableSuperClasses.size() == 0 && lhs.asREXClassImpl().canBeDefinedBy(rhs))
 		{
 			lhs.asREXClassImpl().unfoldableDefinition.add(rhs);
 //			return true;
 		}
-		else if(lhs instanceof REXObjectComplementOfImpl && lhs.complement instanceof REXClassImpl && lhs.complement.asREXClassImpl().unfoldableSuperClasses.size() == 0 && lhs.complement.asREXClassImpl().canBeAbsorbed(factory.getREXObjectComplementOf(rhs)))
+		else if(lhs instanceof REXObjectComplementOfImpl && lhs.complement instanceof REXClassImpl && lhs.complement.asREXClassImpl().unfoldableSuperClasses.size() == 0 && lhs.complement.asREXClassImpl().canBeDefinedBy(factory.getREXObjectComplementOf(rhs)))
 		{
 			lhs.complement.asREXClassImpl().unfoldableDefinition.add(factory.getREXObjectComplementOf(rhs));
 //			return true;
@@ -154,12 +154,12 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 	public boolean absorbEQRHS(REXClassExpressionImpl lhs,
 			REXClassExpressionImpl rhs) {
 		// TODO Auto-generated method stub
-		if(rhs instanceof REXClassImpl && rhs.asREXClassImpl().unfoldableSuperClasses.size() == 0 && rhs.asREXClassImpl().canBeAbsorbed(lhs))
+		if(rhs instanceof REXClassImpl && rhs.asREXClassImpl().unfoldableSuperClasses.size() == 0 && rhs.asREXClassImpl().canBeDefinedBy(lhs))
 		{
 			rhs.asREXClassImpl().unfoldableDefinition.add(lhs);
 			return true;
 		}
-		else if(rhs instanceof REXObjectComplementOfImpl && rhs.complement instanceof REXClassImpl && rhs.complement.asREXClassImpl().unfoldableSuperClasses.size() == 0 && rhs.complement.asREXClassImpl().canBeAbsorbed(factory.getREXObjectComplementOf(lhs)))
+		else if(rhs instanceof REXObjectComplementOfImpl && rhs.complement instanceof REXClassImpl && rhs.complement.asREXClassImpl().unfoldableSuperClasses.size() == 0 && rhs.complement.asREXClassImpl().canBeDefinedBy(factory.getREXObjectComplementOf(lhs)))
 		{
 			rhs.complement.asREXClassImpl().unfoldableDefinition.add(factory.getREXObjectComplementOf(lhs));
 			return true;

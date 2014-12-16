@@ -69,10 +69,10 @@ public class REXObjectUnionOfImpl extends REXClassExpressionImpl
 	}
 
 	@Override
-	public boolean specifiedBy(REXClassImpl cls) {
+	public boolean isDefinedBy(REXClassImpl cls) {
 		// TODO Auto-generated method stub
 		for(REXClassExpressionImpl disjunct:operands)
-			if(disjunct.specifiedBy(cls))
+			if(disjunct.isDefinedBy(cls))
 				return true;
 		return false;
 	}

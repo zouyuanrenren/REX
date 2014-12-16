@@ -75,6 +75,7 @@ public class REXDataFactory {
 	public boolean consistency = true;
 	
 	public HashSet<REXObjectUnionOfImpl> globalConstraints = new HashSet<REXObjectUnionOfImpl>();
+	public HashMap<REXClassExpressionImpl, HashSet<REXClassExpressionImpl>> binaryUnfoldableSuperClass = new HashMap<REXClassExpressionImpl, HashSet<REXClassExpressionImpl>>();
 
 	public REXDataFactory() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		Class cl = Class.forName(REXReasonerConfiguration.absorption);
@@ -462,17 +463,17 @@ public class REXDataFactory {
 //	}
 
 
-	private  REXClassExpressionImpl getREXObjectUnionOf(
-			List<OWLClassExpression> operands) {
-		// TODO Auto-generated method stub
-		if(operands.size() == 1)
-			return getREXClassExpression(operands.get(0));
-
-		REXClassExpressionImpl leftConcept = getREXClassExpression(operands.remove(0));
-		REXClassExpressionImpl rightConcept = getREXObjectUnionOf(operands);
-
-		return getREXObjectUnionOf(leftConcept, rightConcept);
-	}
+//	REXClassExpressionImpl getREXObjectUnionOf(
+//			List<OWLClassExpression> operands) {
+//		// TODO Auto-generated method stub
+//		if(operands.size() == 1)
+//			return getREXClassExpression(operands.get(0));
+//
+//		REXClassExpressionImpl leftConcept = getREXClassExpression(operands.remove(0));
+//		REXClassExpressionImpl rightConcept = getREXObjectUnionOf(operands);
+//
+//		return getREXObjectUnionOf(leftConcept, rightConcept);
+//	}
 
 
 	public  REXClassExpressionImpl getREXObjectUnionOf(REXClassExpressionImpl ... concepts){
@@ -546,6 +547,22 @@ public class REXDataFactory {
 		if(inverse == null)
 			inverse = new REXInverseObjectPropertyImpl((REXObjectPropertyImpl) role);
 		return inverse;
+	}
+
+	public REXClassExpressionImpl getREXObjectIntersectionOf(List<REXClassImpl> clss) {
+		// TODO Auto-generated method stub
+		if(clss.size() == 1)
+			return clss.get(0);
+		REXClassExpressionImpl head = clss.remove(0);
+		return getREXObjectIntersectionOf(head, getREXObjectIntersectionOf(clss));
+	}
+
+	public REXClassExpressionImpl getREXObjectUnionOf(List<REXClassExpressionImpl> clss) {
+		// TODO Auto-generated method stub
+		if(clss.size() == 1)
+			return clss.get(0);
+		REXClassExpressionImpl head = clss.remove(0);
+		return getREXObjectUnionOf(head, getREXObjectUnionOf(clss));
 	}
 
 

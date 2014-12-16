@@ -138,7 +138,7 @@ abstract public class REXClassExpressionImpl implements REXClassExpression {
 
 	public abstract REXClassExpressionImpl testComplement();
 
-	public abstract boolean specifiedBy(REXClassImpl cls);
+	public abstract boolean isDefinedBy(REXClassImpl cls);
 	
 	
 	

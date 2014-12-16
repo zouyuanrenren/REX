@@ -66,10 +66,10 @@ public class REXObjectIntersectionOfImpl extends REXClassExpressionImpl
 	}
 
 	@Override
-	public boolean specifiedBy(REXClassImpl cls) {
+	public boolean isDefinedBy(REXClassImpl cls) {
 		// TODO Auto-generated method stub
 		for(REXClassExpressionImpl conjunct:intersects)
-			if(conjunct.specifiedBy(cls))
+			if(conjunct.isDefinedBy(cls))
 				return true;
 		return false;
 	}

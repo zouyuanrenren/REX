@@ -61,8 +61,8 @@ public class REXObjectSomeValuesFromImpl extends REXClassExpressionImpl
 	}
 
 	@Override
-	public boolean specifiedBy(REXClassImpl cls) {
+	public boolean isDefinedBy(REXClassImpl cls) {
 		// TODO Auto-generated method stub
-		return filler.specifiedBy(cls);
+		return filler.isDefinedBy(cls);
 	}
 }

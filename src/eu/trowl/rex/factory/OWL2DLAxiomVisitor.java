@@ -354,17 +354,19 @@ public class OWL2DLAxiomVisitor implements OWLAxiomVisitor {
 		// TODO Auto-generated method stub
 //		OWLObjectSomeValuesFrom some = factory.factory.getOWLObjectSomeValuesFrom(ax.getProperty(), ax.getRange().getComplementNNF());
 //		initialiseREL2SubClassOf(factory.getREL2ClassExpression(some), factory.bottom);
-		REXClassExpressionImpl some = factory.getREXObjectSomeValuesFrom(ax.getProperty(),ax.getRange().getComplementNNF());
-		initialiseREXSubClassOf(some,factory.bottom);
-		if(factory.smallT && false)
-		{
-//		REL2ObjectPropertyExpressionImpl role = getREL2ObjectPropertyExpression(ax.getProperty());
-//		REL2ClassExpressionImpl range = getREL2ClassExpression(ax.getRange());
-		REXClassExpressionImpl rhs = factory.getREXObjectComplementOf(some);
-		initialiseREXSubClassOf(factory.top, rhs);
-		}
-		some = factory.getREXObjectSomeValuesFrom(factory.getREXObjectPropertyExpression(ax.getProperty().getInverseProperty()), factory.top);
-		initialiseREXSubClassOf(some,factory.getREXClassExpression(ax.getRange()));
+//		REXClassExpressionImpl some = factory.getREXObjectSomeValuesFrom(ax.getProperty(),ax.getRange().getComplementNNF());
+//		initialiseREXSubClassOf(some,factory.bottom);
+		REXClassExpressionImpl all = factory.getREXObjectAllValuesFrom(ax.getProperty(), ax.getRange());
+		initialiseREXSubClassOf(factory.top, all);
+//		if(factory.smallT && false)
+//		{
+////		REL2ObjectPropertyExpressionImpl role = getREL2ObjectPropertyExpression(ax.getProperty());
+////		REL2ClassExpressionImpl range = getREL2ClassExpression(ax.getRange());
+//		REXClassExpressionImpl rhs = factory.getREXObjectComplementOf(some);
+//		initialiseREXSubClassOf(factory.top, rhs);
+//		}
+//		some = factory.getREXObjectSomeValuesFrom(factory.getREXObjectPropertyExpression(ax.getProperty().getInverseProperty()), factory.top);
+//		initialiseREXSubClassOf(some,factory.getREXClassExpression(ax.getRange()));
 //		some = factory.factory.getOWLObjectSomeValuesFrom(ax.getProperty().getInverseProperty(), factory.factory.getOWLThing());
 //		initialiseREL2SubClassOf(factory.getREL2ClassExpression(some), factory.getREL2ClassExpression(ax.getRange()));
 //		role.ranges.add(range);

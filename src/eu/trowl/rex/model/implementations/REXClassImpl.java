@@ -65,30 +65,61 @@ public class REXClassImpl extends REXClassExpressionImpl implements REXClass {
 		return complement;
 	}
 	
-	public boolean canBeAbsorbed(REXClassExpressionImpl... exps) {
-		for(REXClassExpressionImpl eq:unfoldableDefinition)
-			if(!(eq instanceof REXClassImpl))
+	public boolean canBeDefinedBy(REXClassExpressionImpl... exps) {
+//		for(REXClassExpressionImpl eq:unfoldableDefinition)
+//			if(!(eq instanceof REXClassImpl))
+		if(isDefined())
 				return false;
 		for(REXClassExpressionImpl exp:exps)
-			if(exp.specifiedBy(this))
+			if(exp != this && exp.isDefinedBy(this))
 				return false;
 		return true;
 		
 	}
 
 	@Override
-	public boolean specifiedBy(REXClassImpl cls) {
+	public boolean isDefinedBy(REXClassImpl cls) {
 		// TODO Auto-generated method stub
 //		if(this.toString() == "Full")
 //			System.out.println(this);
+//		if(cls.toString() == "Thing")
+//			return false;
+//		if(this.iri.toString().equals("http://www.w3.org/2002/07/owl#Thing") || cls.iri.toString().equals("http://www.w3.org/2002/07/owl#Thing"))
+//			return false;
 		if(this == cls)
 			return true;
-		for(REXClassExpressionImpl sup:unfoldableSuperClasses)
-			if(sup.specifiedBy(cls))
-				return true;
+//		for(REXClassExpressionImpl sup:unfoldableSuperClasses)
+//			if(sup.specifiedBy(cls))
+//				return true;
 		for(REXClassExpressionImpl eq:unfoldableDefinition)
-			if(!(eq instanceof REXClassImpl))
-				return eq.specifiedBy(cls);
+//			if(!(eq instanceof REXClassImpl))
+//				return eq.isDefinedBy(cls);
+			if(eq.isDefinedBy(cls))
+				return true;
+		return false;
+	}
+
+//	public boolean canBeAbsorbed(Set<REXClassExpressionImpl> exps) {
+//		// TODO Auto-generated method stub
+//		for(REXClassExpressionImpl eq:unfoldableDefinition)
+//			if(!(eq instanceof REXClassImpl))
+//				return false;
+//		for(REXClassExpressionImpl exp:exps)
+//			if(exp.specifiedBy(this))
+//				return false;
+//		return true;
+//		}
+
+	public boolean isDefined() {
+		// TODO Auto-generated method stub
+		for(REXClassExpressionImpl def:unfoldableDefinition)
+			if(def instanceof REXClassImpl)
+			{
+				if(def.asREXClassImpl().isDefined())
+				return true;
+			}
+			else
+				return true;
 		return false;
 	}
 

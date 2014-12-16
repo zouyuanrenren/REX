@@ -13,7 +13,7 @@ import eu.trowl.rex.factory.REXOntologyBuilder;
 import eu.trowl.rex.model.implementations.REXClassExpressionImpl;
 import eu.trowl.rex.model.implementations.REXClassImpl;
 
-public class ConceptAbsorptionTest {
+public class AbsorptionTest {
 
 	public static void main(String[] args) throws OWLOntologyCreationException, ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		// TODO Auto-generated method stub
@@ -35,6 +35,12 @@ public class ConceptAbsorptionTest {
 			for(REXClassExpressionImpl eq:exp.unfoldableDefinition)
 				System.out.println(exp+" equivalentClassOf "+eq);
 			unfoldableSize += exp.unfoldableDefinition.size();
+		}
+		for(REXClassExpressionImpl exp:factory.binaryUnfoldableSuperClass.keySet())
+		{
+			for(REXClassExpressionImpl sup:factory.binaryUnfoldableSuperClass.get(exp))
+				System.out.println(exp+" subClassOf "+sup);
+			unfoldableSize += factory.binaryUnfoldableSuperClass.get(exp).size();
 		}
 		System.out.println("=============General TBox=============");
 		for(REXClassExpressionImpl exp:factory.globalConstraints)
