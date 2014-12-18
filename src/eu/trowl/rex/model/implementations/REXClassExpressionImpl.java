@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import eu.trowl.rex.factory.REXDataFactory;
 import eu.trowl.rex.model.interfaces.REXClassExpression;
 
 abstract public class REXClassExpressionImpl implements REXClassExpression {
@@ -139,8 +140,17 @@ abstract public class REXClassExpressionImpl implements REXClassExpression {
 	public abstract REXClassExpressionImpl testComplement();
 
 	public abstract boolean isDefinedBy(REXClassImpl cls);
+
 	
+	public abstract boolean isPartialAbsorbable();
 	
+	public abstract boolean isCompletelyAbsorbable();
+
+	public abstract void addToPatialAbsorbable(Set<REXClassExpressionImpl> pas);
+
+	public abstract void addToNotCompletelyAbsorbable(Set<REXClassExpressionImpl> nCA);
+
+	public abstract REXClassExpressionImpl getComplement(REXDataFactory rexDataFactory);
 	
 	
 }

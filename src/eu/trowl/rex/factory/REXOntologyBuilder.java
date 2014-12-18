@@ -21,6 +21,7 @@ public class REXOntologyBuilder {
 
 	public void buildOntology(OWLOntology onto) {
 		// TODO Auto-generated method stub
+		rex_factory.onto = onto;
 		cNum = onto.getClassesInSignature().size();
 		if(!onto.getClassesInSignature().contains(onto.getOWLOntologyManager().getOWLDataFactory().getOWLThing()))
 			cNum++;

@@ -54,7 +54,9 @@ public class REXClassExpressionBuilder implements
 	@Override
 	public REXClassExpressionImpl visit(OWLObjectIntersectionOf clazz) {
 		// TODO Auto-generated method stub
-		return factory.getREXObjectIntersectionOf(clazz.getOperandsAsList(),0);
+		REXClassExpressionImpl exp = factory.getREXObjectIntersectionOf(clazz.getOperandsAsList(),0);
+		exp.testComplement();
+		return exp;
 	}
 
 	@Override
@@ -88,7 +90,9 @@ public class REXClassExpressionBuilder implements
 	@Override
 	public REXClassExpressionImpl visit(OWLObjectSomeValuesFrom clazz) {
 		// TODO Auto-generated method stub
-		return factory.getREXObjectSomeValuesFrom(clazz.getProperty(), clazz.getFiller());
+		REXClassExpressionImpl some = factory.getREXObjectSomeValuesFrom(clazz.getProperty(), clazz.getFiller());
+		some.testComplement();
+		return some;
 	}
 
 	@Override
@@ -121,7 +125,9 @@ public class REXClassExpressionBuilder implements
 		REXObjectPropertyExpressionImpl role = factory.getREXObjectPropertyExpression(clazz.getProperty());
 		REXClassExpressionImpl	filler = factory.getREXClassExpression(clazz.getFiller());
 
-		return factory.getREXObjectMinCardinality(clazz.getCardinality(), role, filler);
+		REXClassExpressionImpl min = factory.getREXObjectMinCardinality(clazz.getCardinality(), role, filler);
+		min.testComplement();
+		return min;
 	}
 
 	@Override
@@ -166,7 +172,9 @@ public class REXClassExpressionBuilder implements
 			return factory.bottom;
 		REXDataPropertyImpl role = factory.getREXDataPropertyExpression(clazz.getProperty());
 
-		return factory.getREXObjectSomeValuesFrom(role, filler);
+		REXClassExpressionImpl some = factory.getREXObjectSomeValuesFrom(role, filler);
+		some.testComplement();
+		return some;
 	}
 
 	@Override
@@ -199,7 +207,9 @@ public class REXClassExpressionBuilder implements
 		REXObjectPropertyExpressionImpl role = factory.getREXDataPropertyExpression(clazz.getProperty());
 		REXClassExpressionImpl	filler = factory.getREXDataRange(clazz.getFiller());
 
-		return factory.getREXObjectMinCardinality(clazz.getCardinality(), role, filler);
+		REXClassExpressionImpl min = factory.getREXObjectMinCardinality(clazz.getCardinality(), role, filler);
+		min.testComplement();
+		return min;
 	}
 
 	@Override

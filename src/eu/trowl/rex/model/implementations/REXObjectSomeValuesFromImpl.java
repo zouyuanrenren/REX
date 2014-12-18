@@ -1,5 +1,8 @@
 package eu.trowl.rex.model.implementations;
 
+import java.util.Set;
+
+import eu.trowl.rex.factory.REXDataFactory;
 import eu.trowl.rex.model.interfaces.REXObjectSomeValuesFrom;
 
 public class REXObjectSomeValuesFromImpl extends REXClassExpressionImpl
@@ -50,19 +53,59 @@ public class REXObjectSomeValuesFromImpl extends REXClassExpressionImpl
 	}
 
 	@Override
+	public boolean isDefinedBy(REXClassImpl cls) {
+		// TODO Auto-generated method stub
+		return filler.isDefinedBy(cls);
+	}
+
+	@Override
+	public boolean isPartialAbsorbable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isCompletelyAbsorbable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void addToPatialAbsorbable(Set<REXClassExpressionImpl> pas) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addToNotCompletelyAbsorbable(Set<REXClassExpressionImpl> nCA) {
+		// TODO Auto-generated method stub
+		nCA.add(this);
+	}
+
+	@Override
 	public REXClassExpressionImpl testComplement() {
 		// TODO Auto-generated method stub
 		if(complement != null)
 			return complement;
 		REXClassExpressionImpl fillerComp = filler.testComplement();
 		if(fillerComp != null)
+		{
 			complement = prop.alls.get(fillerComp);
+			if(complement != null)
+				complement.complement = this;
+		}
 		return complement;
 	}
 
 	@Override
-	public boolean isDefinedBy(REXClassImpl cls) {
+	public REXClassExpressionImpl getComplement(REXDataFactory rexDataFactory) {
 		// TODO Auto-generated method stub
-		return filler.isDefinedBy(cls);
+		if(complement == null)
+		{
+			REXClassExpressionImpl fillerComp = filler.getComplement(rexDataFactory);
+			complement = rexDataFactory.getREXObjectAllValuesFrom(prop, fillerComp);
+			complement.complement = this;
+		}
+		return complement;
 	}
 }

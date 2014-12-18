@@ -1,5 +1,8 @@
 package eu.trowl.rex.model.implementations;
 
+import java.util.Set;
+
+import eu.trowl.rex.factory.REXDataFactory;
 import eu.trowl.rex.model.interfaces.REXObjectMaxCardinality;
 
 public class REXObjectMaxCardinalityImpl extends REXClassExpressionImpl
@@ -59,19 +62,61 @@ public class REXObjectMaxCardinalityImpl extends REXClassExpressionImpl
 	}
 
 	@Override
+	public boolean isDefinedBy(REXClassImpl cls) {
+		// TODO Auto-generated method stub
+		return filler.isDefinedBy(cls);
+	}
+
+	@Override
+	public boolean isPartialAbsorbable() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isCompletelyAbsorbable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void addToPatialAbsorbable(Set<REXClassExpressionImpl> pas) {
+		// TODO Auto-generated method stub
+		pas.add(this);
+	}
+
+	@Override
+	public void addToNotCompletelyAbsorbable(Set<REXClassExpressionImpl> nCA) {
+		// TODO Auto-generated method stub
+		nCA.add(this);
+	}
+
+	@Override
 	public REXClassExpressionImpl testComplement() {
 		// TODO Auto-generated method stub
 		if(complement != null)
 			return complement;
 		if(filler.mins.containsKey(cardinalityValue+1))
+		{
 			complement = filler.mins.get(cardinalityValue+1).get(prop);
+			if(complement != null)
+				complement.complement = this;
+		}
 		return complement;
 	}
 
 	@Override
-	public boolean isDefinedBy(REXClassImpl cls) {
+	public REXClassExpressionImpl getComplement(REXDataFactory rexDataFactory) {
 		// TODO Auto-generated method stub
-		return filler.isDefinedBy(cls);
+		if(complement == null)
+		{
+			if(filler.mins.containsKey(cardinalityValue+1))
+				complement = filler.mins.get(cardinalityValue+1).get(prop);
+			if(complement == null)
+				complement = rexDataFactory.getREXObjectMinCardinality(cardinalityValue+1, prop, filler);
+			complement.complement = this;
+		}
+		return complement;
 	}
 
 

@@ -6,6 +6,7 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 
+import eu.trowl.rex.factory.REXDataFactory;
 import eu.trowl.rex.model.interfaces.REXClass;
 
 public class REXClassImpl extends REXClassExpressionImpl implements REXClass {
@@ -59,12 +60,6 @@ public class REXClassImpl extends REXClassExpressionImpl implements REXClass {
 		
 	}
 
-	@Override
-	public REXClassExpressionImpl testComplement() {
-		// TODO Auto-generated method stub
-		return complement;
-	}
-	
 	public boolean canBeDefinedBy(REXClassExpressionImpl... exps) {
 //		for(REXClassExpressionImpl eq:unfoldableDefinition)
 //			if(!(eq instanceof REXClassImpl))
@@ -121,6 +116,46 @@ public class REXClassImpl extends REXClassExpressionImpl implements REXClass {
 			else
 				return true;
 		return false;
+	}
+
+	@Override
+	public boolean isPartialAbsorbable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isCompletelyAbsorbable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void addToPatialAbsorbable(Set<REXClassExpressionImpl> pas) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void addToNotCompletelyAbsorbable(Set<REXClassExpressionImpl> nCA) {
+		// TODO Auto-generated method stub
+		nCA.add(this);
+	}
+
+	@Override
+	public REXClassExpressionImpl testComplement() {
+		// TODO Auto-generated method stub
+		return complement;
+	}
+
+	@Override
+	public REXClassExpressionImpl getComplement(REXDataFactory rexDataFactory) {
+		// TODO Auto-generated method stub
+		if(complement == null)
+		{
+			complement = new REXObjectComplementOfImpl(this);
+			complement.complement = this;
+		}
+		return complement;
 	}
 
 }

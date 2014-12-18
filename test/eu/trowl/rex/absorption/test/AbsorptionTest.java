@@ -36,6 +36,15 @@ public class AbsorptionTest {
 				System.out.println(exp+" equivalentClassOf "+eq);
 			unfoldableSize += exp.unfoldableDefinition.size();
 		}
+		for(REXClassImpl exp:factory.freshConcepts)
+		{
+			for(REXClassExpressionImpl sup:exp.unfoldableSuperClasses)
+				System.out.println(exp+" subClassOf "+sup);
+			unfoldableSize+= exp.unfoldableSuperClasses.size();
+			for(REXClassExpressionImpl eq:exp.unfoldableDefinition)
+				System.out.println(exp+" equivalentClassOf "+eq);
+			unfoldableSize += exp.unfoldableDefinition.size();
+		}
 		for(REXClassExpressionImpl exp:factory.binaryUnfoldableSuperClass.keySet())
 		{
 			for(REXClassExpressionImpl sup:factory.binaryUnfoldableSuperClass.get(exp))

@@ -6,5 +6,5 @@ public class REXReasonerConfiguration {
 //	 public static int disResThreshold = 15;
 	 public static int cardinThreshold = 4;
 	 
-	 public static String absorption = "eu.trowl.rex.absorption.BinaryAbsorption";
+	 public static String absorption = "eu.trowl.rex.absorption.RecursivePartialAbsorption";
 }

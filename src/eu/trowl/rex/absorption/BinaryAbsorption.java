@@ -60,11 +60,11 @@ public class BinaryAbsorption extends RoleAbsorption {
 				addToUnfoldableTBox(inter.asREXClassImpl(), union);
 			else
 			{
-			Set<REXClassExpressionImpl> unions = factory.binaryUnfoldableSuperClass.get(inter);
+			HashSet<REXClassExpressionImpl> unions = factory.binaryUnfoldableSuperClass.get(inter);
 			if(unions == null)
 			{
 				unions = new HashSet<REXClassExpressionImpl>();
-				factory.binaryUnfoldableSuperClass.put(inter, (HashSet<REXClassExpressionImpl>) unions);
+				factory.binaryUnfoldableSuperClass.put(inter, unions);
 			}
 			unions.add(union);
 			}

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
@@ -16,6 +18,7 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 import eu.trowl.rex.absorption.AbsorptionVisitor;
@@ -43,6 +46,8 @@ import eu.trowl.rex.util.REXReasonerConfiguration;
 public class REXDataFactory {
 	//	 public List<REL2ClassExpressionImpl> classExpressions = new ArrayList<REL2ClassExpressionImpl>();
 	//	 public int conceptID = 1;
+	
+	int FCid = 1;
 
 	OWL2DLAxiomVisitor axVisitor = new OWL2DLAxiomVisitor(this);
 	REXClassExpressionBuilder cEBuilder = new REXClassExpressionBuilder(this);
@@ -51,6 +56,7 @@ public class REXDataFactory {
 	public AbsorptionVisitor absorber;
 
 	public HashMap<OWLClassExpression, REXClassImpl> concepts;
+	public HashSet<REXClassImpl> freshConcepts;
 	public HashMap<OWLDataRange, REXDatatypeImpl> datatypes;
 	public HashMap<OWLIndividual, REXIndividualImpl> individuals;
 	public HashMap<OWLLiteral, REXLiteralImpl> literals;
@@ -76,6 +82,8 @@ public class REXDataFactory {
 	
 	public HashSet<REXObjectUnionOfImpl> globalConstraints = new HashSet<REXObjectUnionOfImpl>();
 	public HashMap<REXClassExpressionImpl, HashSet<REXClassExpressionImpl>> binaryUnfoldableSuperClass = new HashMap<REXClassExpressionImpl, HashSet<REXClassExpressionImpl>>();
+
+	public OWLOntology onto;
 
 	public REXDataFactory() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		Class cl = Class.forName(REXReasonerConfiguration.absorption);
@@ -123,6 +131,13 @@ public class REXDataFactory {
 
 		REXClassExpressionImpl leftConjunct = getREXClassExpression(operands.get(next));
 		REXClassExpressionImpl rightConjunct = getREXObjectIntersectionOf(operands, next+1);
+		
+		if(leftConjunct == bottom || rightConjunct == bottom)
+			return bottom;
+		if(leftConjunct == top)
+			return rightConjunct;
+		if(rightConjunct == top)
+			return leftConjunct;
 
 		return getREXObjectIntersectionOf(leftConjunct, rightConjunct);
 
@@ -135,9 +150,16 @@ public class REXDataFactory {
 			return getREXClassExpression(operands.get(next));
 		
 		
+		
 		REXClassExpressionImpl leftDisjunct = getREXClassExpression(operands.get(next));
 		REXClassExpressionImpl rightDisjunct = getREXObjectUnionOf(operands, next+1);
 
+		if(leftDisjunct == bottom)
+			return rightDisjunct;
+		if(rightDisjunct == bottom)
+			return leftDisjunct;
+		if(leftDisjunct == top || rightDisjunct == top)
+			return top;
 		return getREXObjectUnionOf(leftDisjunct, rightDisjunct);
 	}
 
@@ -218,6 +240,7 @@ public class REXDataFactory {
 
 	public  void initialise(OWLDataFactory datafactory){
 		concepts = new HashMap<OWLClassExpression, REXClassImpl>();
+		freshConcepts = new HashSet<REXClassImpl>();
 		contexts = new HashSet<REXClassExpressionImpl>();
 		datatypes = new HashMap<OWLDataRange, REXDatatypeImpl>();
 		individuals = new HashMap<OWLIndividual, REXIndividualImpl>();
@@ -279,6 +302,13 @@ public class REXDataFactory {
 		REXClassExpressionImpl leftConjunct = getREXDataRange(operands.remove(0));
 		REXClassExpressionImpl rightConjunct = getREXDataIntersectionOf(operands);
 
+		if(leftConjunct == bottom || rightConjunct == bottom)
+			return bottom;
+		if(leftConjunct == top)
+			return rightConjunct;
+		if(rightConjunct == top)
+			return leftConjunct;
+
 		return getREXObjectIntersectionOf(leftConjunct, rightConjunct);
 	}
 
@@ -325,19 +355,31 @@ public class REXDataFactory {
 	public REXClassExpressionImpl getREXObjectComplementOf(
 			REXClassExpressionImpl complement) {
 		// TODO Auto-generated method stub
-		if(complement instanceof REXObjectComplementOfImpl)
-			return ((REXObjectComplementOfImpl)complement).getClassExpression();
 		REXClassExpressionImpl cls = complement.complement;
 		if(cls == null)
 		{
-			cls = new REXObjectComplementOfImpl(complement);
+			cls = complement.getComplement(this);
 		}
+//		if(complement instanceof REXObjectComplementOfImpl)
+//			return ((REXObjectComplementOfImpl)complement).getClassExpression();
+//		REXClassExpressionImpl cls = complement.complement;
+//		if(cls == null)
+//		{
+//			cls = new REXObjectComplementOfImpl(complement);
+//		}
 		return cls;
 	}
 
-	REXObjectIntersectionOfImpl getREXObjectIntersectionOf(REXClassExpressionImpl ... conjuncts){
+	public REXClassExpressionImpl getREXObjectIntersectionOf(REXClassExpressionImpl ... conjuncts){
 		//		if(conjuncts.length>2)
 		//			System.out.println("Incorrect number of conjuncts!");
+		if(conjuncts[0] == bottom || conjuncts[1] == bottom)
+			return bottom;
+		if(conjuncts[0] == top)
+			return conjuncts[1];
+		if(conjuncts[1] == top)
+			return conjuncts[0];
+
 		REXObjectIntersectionOfImpl newAnd = conjuncts[0].Ands.get(conjuncts[1]);
 
 		if(newAnd == null)
@@ -350,7 +392,7 @@ public class REXDataFactory {
 		return newAnd;
 	}
 
-	REXClassExpressionImpl getREXObjectMinCardinality(
+	public REXClassExpressionImpl getREXObjectMinCardinality(
 			int cardinality, REXObjectPropertyExpressionImpl role,
 			REXClassExpressionImpl filler) {
 		// TODO Auto-generated method stub
@@ -409,6 +451,14 @@ public class REXDataFactory {
 			cls.original = false;
 			concepts.put(exp, cls);
 		}
+		return cls;
+	}
+	
+	public REXClassImpl getREXApproximationName(REXClassExpressionImpl exp){
+		REXClassImpl cls = new REXClassImpl(IRI.create("http://rex/C"+FCid));
+		FCid++;
+		cls.original = false;
+		freshConcepts.add(cls);
 		return cls;
 	}
 
@@ -479,6 +529,13 @@ public class REXDataFactory {
 	public  REXClassExpressionImpl getREXObjectUnionOf(REXClassExpressionImpl ... concepts){
 		//		if(concepts.length>2)
 		//			System.out.println("Incorrect number of union concepts!");
+		if(concepts[0] == bottom)
+			return concepts[1];
+		if(concepts[1] == bottom)
+			return concepts[0];
+		if(concepts[0] == top || concepts[1] == top)
+			return top;
+
 		REXObjectUnionOfImpl newOr = concepts[0].Ors.get(concepts[1]);
 
 		if(newOr == null)
@@ -492,7 +549,7 @@ public class REXDataFactory {
 		return newOr;
 	}
 
-	REXClassExpressionImpl getREXObjectMaxCardinality(
+	public REXClassExpressionImpl getREXObjectMaxCardinality(
 				int cardinality,
 				REXObjectPropertyExpressionImpl role,
 				REXClassExpressionImpl filler) {
@@ -554,7 +611,16 @@ public class REXDataFactory {
 		if(clss.size() == 1)
 			return clss.get(0);
 		REXClassExpressionImpl head = clss.remove(0);
-		return getREXObjectIntersectionOf(head, getREXObjectIntersectionOf(clss));
+		REXClassExpressionImpl tail = getREXObjectIntersectionOf(clss);
+		
+		if(head == bottom || tail == bottom)
+			return bottom;
+		if(head == top)
+			return tail;
+		if(tail == top)
+			return head;
+		
+		return getREXObjectIntersectionOf(head, tail);
 	}
 
 	public REXClassExpressionImpl getREXObjectUnionOf(List<REXClassExpressionImpl> clss) {
@@ -562,7 +628,27 @@ public class REXDataFactory {
 		if(clss.size() == 1)
 			return clss.get(0);
 		REXClassExpressionImpl head = clss.remove(0);
-		return getREXObjectUnionOf(head, getREXObjectUnionOf(clss));
+		REXClassExpressionImpl tail = getREXObjectUnionOf(clss);
+	
+		if(head == bottom)
+			return tail;
+		if(tail == bottom)
+			return head;
+		if(head == top || tail == top)
+			return top;
+
+		return getREXObjectUnionOf(head, tail);
+	}
+
+	public boolean testUniqueness(REXClassImpl A) {
+		// TODO Auto-generated method stub
+		if(A.original)
+		{
+			OWLClass cls = factory.getOWLClass(A.getIRI());
+			if(onto.getSubClassAxiomsForSubClass(cls).size() + onto.getEquivalentClassesAxioms(cls).size() >1)
+				return false;
+		}
+		return true;
 	}
 
 

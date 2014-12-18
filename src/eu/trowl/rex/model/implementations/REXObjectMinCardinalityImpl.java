@@ -1,5 +1,6 @@
 package eu.trowl.rex.model.implementations;
 
+import eu.trowl.rex.factory.REXDataFactory;
 import eu.trowl.rex.model.interfaces.REXObjectMinCardinality;
 
 public class REXObjectMinCardinalityImpl extends REXObjectSomeValuesFromImpl
@@ -64,7 +65,25 @@ public class REXObjectMinCardinalityImpl extends REXObjectSomeValuesFromImpl
 			return complement;
 		REXClassExpressionImpl fillerFiller = ((REXCardinalityAtomic)filler).filler;
 		if(fillerFiller.maxs.containsKey(cardinalityValue-1))
+		{
 			complement = fillerFiller.maxs.get(cardinalityValue-1).get(prop);
+			if(complement != null)
+				complement.complement = this;
+		}
+		return complement;
+	}
+	
+	@Override
+	public REXClassExpressionImpl getComplement(REXDataFactory rexDataFactory){
+		if(complement == null)
+		{
+			REXClassExpressionImpl fillerFiller = ((REXCardinalityAtomic)filler).filler;
+			if(fillerFiller.maxs.containsKey(cardinalityValue-1))
+				complement = fillerFiller.maxs.get(cardinalityValue-1).get(prop);
+			if(complement == null)
+				complement = rexDataFactory.getREXObjectMaxCardinality(cardinalityValue-1, prop, fillerFiller);
+			complement.complement = this;
+		}
 		return complement;
 	}
 

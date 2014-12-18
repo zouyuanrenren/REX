@@ -117,19 +117,6 @@ public class ConceptAbsorption extends AbsorptionVisitor {
 		}
 	}
 
-	protected void addToUnfoldableTBox(REXClassImpl lhs,
-			REXClassExpressionImpl rhs) {
-		// TODO Auto-generated method stub
-		lhs.unfoldableSuperClasses.add(rhs);
-	}
-
-	protected void addToGeneralTBox(REXClassExpressionImpl lhsComp,
-			REXClassExpressionImpl rhs) {
-		// TODO Auto-generated method stub
-		factory.globalConstraints.add((REXObjectUnionOfImpl) factory.getREXObjectUnionOf(lhsComp,rhs));
-
-	}
-
 	@Override
 	public void absorbEQLHS(REXClassExpressionImpl lhs, REXClassExpressionImpl rhs) {
 		// TODO Auto-generated method stub

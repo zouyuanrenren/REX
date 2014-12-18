@@ -2,7 +2,9 @@ package eu.trowl.rex.model.implementations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import eu.trowl.rex.factory.REXDataFactory;
 import eu.trowl.rex.model.interfaces.REXObjectIntersectionOf;
 
 public class REXObjectIntersectionOfImpl extends REXClassExpressionImpl
@@ -54,6 +56,47 @@ public class REXObjectIntersectionOfImpl extends REXClassExpressionImpl
 	}
 
 	@Override
+	public boolean isDefinedBy(REXClassImpl cls) {
+		// TODO Auto-generated method stub
+		for(REXClassExpressionImpl conjunct:intersects)
+			if(conjunct.isDefinedBy(cls))
+				return true;
+		return false;
+	}
+
+	@Override
+	public boolean isPartialAbsorbable() {
+		// TODO Auto-generated method stub
+		for(REXClassExpressionImpl ex:intersects)
+			if(!ex.isPartialAbsorbable())
+				return false;
+		return true;
+	}
+
+	@Override
+	public boolean isCompletelyAbsorbable() {
+		// TODO Auto-generated method stub
+		for(REXClassExpressionImpl ex:intersects)
+			if(!ex.isCompletelyAbsorbable())
+				return false;
+		return true;
+	}
+
+	@Override
+	public void addToPatialAbsorbable(Set<REXClassExpressionImpl> pas) {
+		// TODO Auto-generated method stub
+		if(isPartialAbsorbable())
+			pas.add(this);
+	}
+
+	@Override
+	public void addToNotCompletelyAbsorbable(Set<REXClassExpressionImpl> nCA) {
+		// TODO Auto-generated method stub
+		if(!isCompletelyAbsorbable())
+			nCA.add(this);
+	}
+
+	@Override
 	public REXClassExpressionImpl testComplement() {
 		// TODO Auto-generated method stub
 		if(complement != null)
@@ -61,17 +104,25 @@ public class REXObjectIntersectionOfImpl extends REXClassExpressionImpl
 		REXClassExpressionImpl firstComp = intersects.get(0).testComplement();
 		REXClassExpressionImpl secondComp = intersects.get(1).testComplement();
 		if(firstComp != null && secondComp != null)
+		{
 			complement = firstComp.Ors.get(secondComp);
+			if(complement != null)
+				complement.complement = this;
+		}
 		return complement;
 	}
 
 	@Override
-	public boolean isDefinedBy(REXClassImpl cls) {
+	public REXClassExpressionImpl getComplement(REXDataFactory rexDataFactory) {
 		// TODO Auto-generated method stub
-		for(REXClassExpressionImpl conjunct:intersects)
-			if(conjunct.isDefinedBy(cls))
-				return true;
-		return false;
+		if(complement == null)
+		{
+			REXClassExpressionImpl firstComp = intersects.get(0).getComplement(rexDataFactory);
+			REXClassExpressionImpl secondComp = intersects.get(1).getComplement(rexDataFactory);
+			complement = rexDataFactory.getREXObjectUnionOf(firstComp, secondComp);
+			complement.complement = this;
+		}
+		return complement;
 	}
 
 }
